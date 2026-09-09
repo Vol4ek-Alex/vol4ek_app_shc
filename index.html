@@ -1,140 +1,324 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="h-full bg-slate-950 text-slate-100">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Расписание</title>
-  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Расписание%22,%22short_name%22:%22Расписание%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22#ffffff%22,%22theme_color%22:%22#4f46e5%22}">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- PWA Meta tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#020617">
+  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Расписание%22,%22short_name%22:%22Расписание%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22#020617%22,%22theme_color%22:%22#020617%22}">
+
+  <!-- Tailwind & Supabase SDK -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .glass { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .glass-modal { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.12); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
-<body class="bg-gray-100 p-4 font-sans text-gray-800">
-  <div class="max-w-md mx-auto">
-    <h1 class="text-2xl font-bold text-center text-indigo-600 mb-4">📅 Расписание занятий</h1>
-    
-    <!-- Переключатель дней -->
-    <div class="flex overflow-x-auto gap-2 mb-4 pb-2" id="days-nav"></div>
+<body class="h-full flex flex-col pb-24 md:pb-10 pt-safe antialiased selection:bg-indigo-500 selection:text-white">
 
-    <!-- Список пар -->
-    <div id="schedule-list" class="space-y-3"></div>
-
-    <!-- Кнопка добавить -->
-    <button onclick="openForm()" class="w-full mt-6 bg-indigo-600 text-white py-3 rounded-xl font-semibold shadow-lg hover:bg-indigo-700 transition">+ Добавить пару</button>
-  </div>
-
-  <!-- Модалка редактирования -->
-  <div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl p-6 w-full max-w-sm space-y-3">
-      <h3 id="modal-title" class="text-lg font-bold">Пара</h3>
-      <input type="hidden" id="item-id">
-      <select id="day" class="w-full border p-2 rounded-lg">
-        <option value="1">Понедельник</option><option value="2">Вторник</option>
-        <option value="3">Среда</option><option value="4">Четверг</option>
-        <option value="5">Пятница</option><option value="6">Суббота</option>
-      </select>
-      <div class="flex gap-2">
-        <input id="time_start" placeholder="08:30" class="w-1/2 border p-2 rounded-lg">
-        <input id="time_end" placeholder="10:05" class="w-1/2 border p-2 rounded-lg">
+  <!-- Шапка -->
+  <header class="sticky top-0 z-30 glass border-b border-slate-800/60 px-4 py-4 md:px-8">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 font-bold text-lg text-white">
+          🎓
+        </div>
+        <div>
+          <h1 class="text-lg md:text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+            Академия
+          </h1>
+          <p class="text-xs text-slate-400 font-medium">Расписание занятий</p>
+        </div>
       </div>
-      <input id="subject" placeholder="Предмет" class="w-full border p-2 rounded-lg">
-      <input id="type" placeholder="Тип (Лекция/Практика)" class="w-full border p-2 rounded-lg">
-      <input id="room" placeholder="Кабинет/Аудитория" class="w-full border p-2 rounded-lg">
-      <input id="teacher" placeholder="Преподаватель" class="w-full border p-2 rounded-lg">
-      
-      <div class="flex gap-2 pt-2">
-        <button onclick="saveItem()" class="flex-1 bg-indigo-600 text-white py-2 rounded-lg">Сохранить</button>
-        <button onclick="closeForm()" class="bg-gray-200 py-2 px-4 rounded-lg">Отмена</button>
+
+      <button onclick="openModal()" class="hidden md:flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all active:scale-95">
+        <span>+</span> Добавить пару
+      </button>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 pt-6">
+    <!-- Навигация по дням (мобильная / планшетная) -->
+    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-4 md:pb-6" id="days-nav"></div>
+
+    <!-- Контейнер сетки расписания -->
+    <!-- Мобилки: 1 колонка. ПК (xl): 6 колонок (Недельный обзор) -->
+    <div id="schedule-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4"></div>
+  </main>
+
+  <!-- Плавающая кнопка добавить для мобилок -->
+  <button onclick="openModal()" class="md:hidden fixed bottom-6 right-6 z-40 w-14 h-14 bg-indigo-600 active:bg-indigo-500 text-white rounded-2xl flex items-center justify-center text-2xl shadow-xl shadow-indigo-600/40 border border-indigo-400/30 transition-all active:scale-90">
+    +
+  </button>
+
+  <!-- Модальное окно (Форма добавления/редактирования) -->
+  <div id="modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-slate-950/80 backdrop-blur-md transition-all">
+    <div class="glass-modal w-full max-w-lg rounded-t-3xl md:rounded-3xl p-6 shadow-2xl border-t md:border border-slate-700/50 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h3 id="modal-title" class="text-xl font-bold text-white">Новое занятие</h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-white text-xl p-2">✕</button>
       </div>
+
+      <form onsubmit="saveItem(event)" class="space-y-4">
+        <input type="hidden" id="item-id">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">День недели</label>
+          <select id="day_of_week" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+            <option value="1">Понедельник</option>
+            <option value="2">Вторник</option>
+            <option value="3">Среда</option>
+            <option value="4">Четверг</option>
+            <option value="5">Пятница</option>
+            <option value="6">Суббота</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Начало</label>
+            <input type="text" id="time_start" placeholder="08:30" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Окончание</label>
+            <input type="text" id="time_end" placeholder="10:05" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Предмет</label>
+          <input type="text" id="subject" placeholder="Высшая математика" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Тип пары</label>
+            <select id="type" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+              <option value="Лекция">Лекция</option>
+              <option value="Практика">Практика</option>
+              <option value="Лабораторная">Лабораторная</option>
+              <option value="Семинар">Семинар</option>
+
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Аудитория</label>
+            <input type="text" id="room" placeholder="302-А" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Преподаватель</label>
+          <input type="text" id="teacher" placeholder="Иванов И. И." class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <button type="button" onclick="closeModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3 rounded-xl transition">
+            Отмена
+          </button>
+          <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-xl shadow-lg shadow-indigo-600/30 transition">
+            Сохранить
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
   <script>
-    // ВСТАВЬ СВОИ ДАННЫЕ ИЗ SUPABASE СЮДА:
+    // ВСТАВЬ СВОИ ДАННЫЕ ИЗ SUPABASE:
     const SUPABASE_URL = 'https://wiowprtgsueqzdgtdjqr.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_BBc7NEU8ZgTaWuwsKYC-1A_43vfGWTs';
     
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-    let currentDay = 1;
-    let items = [];
 
-    function renderDays() {
-      document.getElementById('days-nav').innerHTML = days.map((d, i) => 
-        `<button onclick="changeDay(${i+1})" class="px-4 py-2 rounded-xl font-medium ${currentDay === i+1 ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600'}">${d}</button>`
-      ).join('');
+    const daysList = [
+      { id: 1, full: 'Понедельник', short: 'Пн' },
+      { id: 2, full: 'Вторник', short: 'Вт' },
+      { id: 3, full: 'Среда', short: 'Ср' },
+      { id: 4, full: 'Четверг', short: 'Чт' },
+      { id: 5, full: 'Пятница', short: 'Пт' },
+      { id: 6, full: 'Суббота', short: 'Сб' }
+    ];
+
+    let activeDay = 1;
+    let allSchedule = [];
+    let isDesktop = window.innerWidth >= 1280;
+
+    window.addEventListener('resize', () => {
+      const currentIsDesktop = window.innerWidth >= 1280;
+      if (currentIsDesktop !== isDesktop) {
+        isDesktop = currentIsDesktop;
+        renderDaysNav();
+        renderSchedule();
+      }
+    });
+
+    function getTypeStyle(type) {
+      switch(type) {
+        case 'Лекция': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+        case 'Практика': return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+        case 'Лабораторная': return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
+        default: return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
+      }
+    }
+
+    function renderDaysNav() {
+      const nav = document.getElementById('days-nav');
+      if (isDesktop) {
+        nav.innerHTML = `<div class="text-sm font-semibold text-slate-400 py-1">Недельный обзор (все дни)</div>`;
+        return;
+      }
+
+      nav.innerHTML = daysList.map(day => `
+        <button onclick="selectDay(${day.id})" class="px-5 py-2.5 rounded-2xl font-semibold text-sm transition-all whitespace-nowrap ${activeDay === day.id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 scale-105' : 'glass text-slate-400 hover:text-white'}">
+          ${day.full}
+        </button>
+      `).join('');
     }
 
     async function loadData() {
-      const { data } = await _supabase.from('schedule').select('*').eq('day_of_week', currentDay).order('time_start');
-      items = data || [];
+      const { data } = await _supabase.from('schedule').select('*').order('time_start');
+      allSchedule = data || [];
       renderSchedule();
     }
 
     function renderSchedule() {
-      const list = document.getElementById('schedule-list');
-      if(!items.length) { list.innerHTML = '<div class="text-center py-8 text-gray-400">Выходной / Нет пар</div>'; return; }
-      
-      list.innerHTML = items.map(item => `
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 relative">
-          <div class="flex justify-between items-start">
-            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">${item.time_start} - ${item.time_end}</span>
-            <div class="space-x-2">
-              <button onclick="editItem('${item.id}')" class="text-sm text-gray-400">✏️</button>
-              <button onclick="deleteItem('${item.id}')" class="text-sm text-red-400">🗑️</button>
+      const container = document.getElementById('schedule-container');
+
+      if (isDesktop) {
+        // Десктоп режим: 6 колонок под каждый день недели
+        container.innerHTML = daysList.map(day => {
+          const dayItems = allSchedule.filter(i => i.day_of_week === day.id);
+          return `
+            <div class="space-y-3">
+              <div class="glass p-3 rounded-2xl text-center font-bold text-slate-300 border-b border-indigo-500/30">
+                ${day.full}
+              </div>
+              <div class="space-y-3">
+                ${renderDayItemsHTML(dayItems)}
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        // Мобильный / Таншетный режим: Выбранный день
+        const currentItems = allSchedule.filter(i => i.day_of_week === activeDay);
+        container.innerHTML = renderDayItemsHTML(currentItems);
+      }
+    }
+
+    function renderDayItemsHTML(items) {
+      if (!items.length) {
+        return `
+          <div class="glass p-8 rounded-3xl text-center text-slate-500 text-sm flex flex-col items-center justify-center gap-2">
+            <span>🎉</span>
+            <span>Пар нет</span>
+          </div>
+        `;
+      }
+
+      return items.map(item => `
+        <div class="glass p-4 rounded-2xl relative group hover:border-slate-700 transition-all">
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-900/80 text-indigo-300 border border-slate-800">
+              ${item.time_start} - ${item.time_end}
+            </span>
+            <div class="flex gap-2 opacity-80 group-hover:opacity-100">
+              <button onclick="editModal('${item.id}')" class="text-xs text-slate-400 hover:text-indigo-400 p-1">✏️</button>
+              <button onclick="deleteItem('${item.id}')" class="text-xs text-slate-400 hover:text-rose-400 p-1">🗑️</button>
             </div>
           </div>
-          <h4 class="font-bold text-lg mt-1">${item.subject}</h4>
-          <p class="text-sm text-gray-500">${item.type || ''} ${item.room ? '• Каб. ' + item.room : ''}</p>
-          ${item.teacher ? `<p class="text-xs text-gray-400 mt-1">👨‍🏫 ${item.teacher}</p>` : ''}
+
+          <h4 class="font-bold text-white text-base leading-snug mb-2">${item.subject}</h4>
+
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            ${item.type ? `<span class="px-2 py-0.5 rounded-md border font-medium ${getTypeStyle(item.type)}">${item.type}</span>` : ''}
+            ${item.room ? `<span class="text-slate-400">🚪 Каб. ${item.room}</span>` : ''}
+          </div>
+
+          ${item.teacher ? `<div class="mt-2 pt-2 border-t border-slate-800/60 text-xs text-slate-400">👨‍🏫 ${item.teacher}</div>` : ''}
         </div>
       `).join('');
     }
 
-    function changeDay(day) { currentDay = day; renderDays(); loadData(); }
-    function openForm() { document.getElementById('item-id').value = ''; document.getElementById('modal').classList.remove('hidden'); }
-    function closeForm() { document.getElementById('modal').classList.add('hidden'); }
+    function selectDay(id) {
+      activeDay = id;
+      renderDaysNav();
+      renderSchedule();
+    }
 
-    function editItem(id) {
-      const item = items.find(i => i.id === id);
-      document.getElementById('item-id').value = item.id;
-      document.getElementById('day').value = item.day_of_week;
-      document.getElementById('time_start').value = item.time_start;
-      document.getElementById('time_end').value = item.time_end;
-      document.getElementById('subject').value = item.subject;
-      document.getElementById('type').value = item.type || '';
-      document.getElementById('room').value = item.room || '';
-      document.getElementById('teacher').value = item.teacher || '';
+    function openModal() {
+      document.getElementById('item-id').value = '';
+      document.getElementById('modal-title').innerText = 'Новая пара';
+      document.getElementById('day_of_week').value = activeDay;
       document.getElementById('modal').classList.remove('hidden');
     }
 
-    async function saveItem() {
+    function closeModal() {
+      document.getElementById('modal').classList.add('hidden');
+    }
+
+    function editModal(id) {
+      const item = allSchedule.find(i => i.id === id);
+      if (!item) return;
+
+      document.getElementById('item-id').value = item.id;
+      document.getElementById('modal-title').innerText = 'Редактировать пару';
+      document.getElementById('day_of_week').value = item.day_of_week;
+      document.getElementById('time_start').value = item.time_start;
+      document.getElementById('time_end').value = item.time_end;
+      document.getElementById('subject').value = item.subject;
+      document.getElementById('type').value = item.type || 'Лекция';
+      document.getElementById('room').value = item.room || '';
+      document.getElementById('teacher').value = item.teacher || '';
+
+      document.getElementById('modal').classList.remove('hidden');
+    }
+
+    async function saveItem(e) {
+      e.preventDefault();
+
       const id = document.getElementById('item-id').value;
       const payload = {
-        day_of_week: parseInt(document.getElementById('day').value),
+        day_of_week: parseInt(document.getElementById('day_of_week').value),
         pair_number: 1,
         time_start: document.getElementById('time_start').value,
         time_end: document.getElementById('time_end').value,
         subject: document.getElementById('subject').value,
         type: document.getElementById('type').value,
         room: document.getElementById('room').value,
-        teacher: document.getElementById('teacher').value,
+        teacher: document.getElementById('teacher').value
       };
 
-      if(id) await _supabase.from('schedule').update(payload).eq('id', id);
-      else await _supabase.from('schedule').insert([payload]);
+      if (id) {
+        await _supabase.from('schedule').update(payload).eq('id', id);
+      } else {
+        await _supabase.from('schedule').insert([payload]);
+      }
 
-      closeForm();
+      closeModal();
       loadData();
     }
 
     async function deleteItem(id) {
-      if(confirm('Удалить пару?')) {
+      if (confirm('Удалить эту пару?')) {
         await _supabase.from('schedule').delete().eq('id', id);
         loadData();
       }
     }
 
-    renderDays();
+    // Инициализация
+    renderDaysNav();
     loadData();
   </script>
 </body>
