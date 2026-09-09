@@ -52,7 +52,11 @@
     </div>
   </header>
 
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 pt-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 pt-4">
+    
+    <!-- ВИДЖЕТ ТЕКУЩЕГО СТАТУСА (ТАЙМЕР ДО ПАРЫ / КОНЦА ПАРЫ) -->
+    <div id="status-widget" class="mb-6"></div>
+
     <!-- Навигация по дням -->
     <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-4 md:pb-6" id="days-nav"></div>
 
@@ -150,20 +154,17 @@
         <button onclick="closePresetsModal()" class="text-slate-400 hover:text-white text-xl p-2">✕</button>
       </div>
 
-      <!-- Табы выбoра справочника -->
       <div class="flex border-b border-slate-800 mb-4 gap-2">
         <button onclick="switchPresetTab('subject')" id="tab-subject" class="pb-2 px-3 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400">Предметы</button>
         <button onclick="switchPresetTab('room')" id="tab-room" class="pb-2 px-3 text-sm font-semibold text-slate-400">Кабинеты</button>
         <button onclick="switchPresetTab('teacher')" id="tab-teacher" class="pb-2 px-3 text-sm font-semibold text-slate-400">Преподаватели</button>
       </div>
 
-      <!-- Форма добавления пресета -->
       <div class="flex gap-2 mb-4">
         <input type="text" id="new-preset-name" placeholder="Название..." class="flex-1 bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 text-sm">
         <button onclick="addPreset()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 rounded-xl text-sm transition">Добавить</button>
       </div>
 
-      <!-- Список значений -->
       <div id="presets-list" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
     </div>
   </div>
@@ -183,7 +184,7 @@
       { id: 6, full: 'Суббота', short: 'Сб' }
     ];
 
-    let activeDay = 1;
+    let activeDay = (new Date().getDay() === 0 || new Date().getDay() === 7) ? 1 : new Date().getDay();
     let allSchedule = [];
     let presets = [];
     let currentPresetTab = 'subject';
@@ -230,6 +231,7 @@
 
       populateSelectOptions();
       renderSchedule();
+      updateStatusWidget();
     }
 
     function populateSelectOptions() {
@@ -240,6 +242,84 @@
       document.getElementById('subject').innerHTML = subjects.map(s => `<option value="${s.name}">${s.name}</option>`).join('') || '<option value="">(Список пуст)</option>';
       document.getElementById('room').innerHTML = '<option value="">Не указано</option>' + rooms.map(r => `<option value="${r.name}">${r.name}</option>`).join('');
       document.getElementById('teacher').innerHTML = '<option value="">Не указано</option>' + teachers.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+    }
+
+    /* ЛОГИКА ТАЙМЕРА И СТАТУСА ПАРЫ */
+    function timeToMinutes(timeStr) {
+      if(!timeStr) return 0;
+      const [h, m] = timeStr.split(':').map(Number);
+      return h * 60 + m;
+    }
+
+    function updateStatusWidget() {
+      const widget = document.getElementById('status-widget');
+      const now = new Date();
+      const currentDayOfWeek = now.getDay(); // 0 = Воскресенье, 1 = Пн ...
+      
+      if(currentDayOfWeek === 0) {
+        widget.innerHTML = `
+          <div class="glass p-4 rounded-2xl border-l-4 border-indigo-500 flex items-center gap-3">
+            <span class="text-2xl">🌴</span>
+            <div><div class="font-bold text-white">Воскресенье — выходной</div><div class="text-xs text-slate-400">Набирайтесь сил перед учебой!</div></div>
+          </div>`;
+        return;
+      }
+
+      const todayItems = allSchedule.filter(i => i.day_of_week === currentDayOfWeek)
+                                     .sort((a,b) => timeToMinutes(a.time_start) - timeToMinutes(b.time_start));
+
+      if(!todayItems.length) {
+        widget.innerHTML = `
+          <div class="glass p-4 rounded-2xl border-l-4 border-emerald-500 flex items-center gap-3">
+            <span class="text-2xl">🎉</span>
+            <div><div class="font-bold text-white">Сегодня нет пар</div><div class="text-xs text-slate-400">В расписании на сегодня ничего не запланировано.</div></div>
+          </div>`;
+        return;
+      }
+
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+      
+      // Ищем текущую пару
+      const currentPair = todayItems.find(i => currentMinutes >= timeToMinutes(i.time_start) && currentMinutes < timeToMinutes(i.time_end));
+      
+      // Ищем следующую пару
+      const nextPair = todayItems.find(i => timeToMinutes(i.time_start) > currentMinutes);
+
+      if(currentPair) {
+        const leftMinutes = timeToMinutes(currentPair.time_end) - currentMinutes;
+        widget.innerHTML = `
+          <div class="glass p-4 rounded-2xl border-l-4 border-emerald-500 bg-emerald-500/5 flex justify-between items-center gap-3">
+            <div>
+              <div class="text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-0.5">Сейчас идет (${currentPair.type || 'Пара'})</div>
+              <div class="font-bold text-white text-base">${currentPair.subject}</div>
+              <div class="text-xs text-slate-400 mt-1">${currentPair.room ? '🚪 Кабинет ' + currentPair.room : ''} ${currentPair.teacher ? '• 👨‍🏫 ' + currentPair.teacher : ''}</div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="text-xl md:text-2xl font-black text-emerald-400">${leftMinutes} мин</div>
+              <div class="text-[10px] text-slate-400 uppercase tracking-wider">до конца</div>
+            </div>
+          </div>`;
+      } else if(nextPair) {
+        const untilMinutes = timeToMinutes(nextPair.time_start) - currentMinutes;
+        widget.innerHTML = `
+          <div class="glass p-4 rounded-2xl border-l-4 border-amber-500 bg-amber-500/5 flex justify-between items-center gap-3">
+            <div>
+              <div class="text-xs font-semibold text-amber-400 uppercase tracking-wider mb-0.5">Перерыв / Скоро пара</div>
+              <div class="font-bold text-white text-base">${nextPair.subject}</div>
+              <div class="text-xs text-slate-400 mt-1">${nextPair.room ? '🚪 Кабинет ' + nextPair.room : ''} ${nextPair.type ? '• ' + nextPair.type : ''}</div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="text-xl md:text-2xl font-black text-amber-400">${untilMinutes} мин</div>
+              <div class="text-[10px] text-slate-400 uppercase tracking-wider">до начала</div>
+            </div>
+          </div>`;
+      } else {
+        widget.innerHTML = `
+          <div class="glass p-4 rounded-2xl border-l-4 border-indigo-500 flex items-center gap-3">
+            <span class="text-2xl">✅</span>
+            <div><div class="font-bold text-white">Все пары на сегодня завершены</div><div class="text-xs text-slate-400">Отличная работа, можно отдыхать!</div></div>
+          </div>`;
+      }
     }
 
     function renderSchedule() {
@@ -365,7 +445,7 @@
       }
     }
 
-    /* ЛОГИКА СПРАВОЧНИКОВ */
+    /* Справочники */
     function openPresetsModal() {
       renderPresetsList();
       document.getElementById('presets-modal').classList.remove('hidden');
@@ -422,9 +502,10 @@
       renderPresetsList();
     }
 
-    // Инициализация
+    // Инициализация и автообновление таймера каждую минуту
     renderDaysNav();
     loadData();
+    setInterval(updateStatusWidget, 30000); // каждые 30 секунд обновляем таймер
   </script>
 </body>
 </html>
