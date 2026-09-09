@@ -70,7 +70,7 @@
     <!-- ВИДЖЕТ ТЕКУЩЕГО СТАТУСА -->
     <div id="status-widget" class="mb-6"></div>
 
-    <!-- Навигация по дням с датами (Равномерная сетка на всю ширину) -->
+    <!-- Навигация по дням с датами -->
     <div id="days-nav" class="mb-6"></div>
 
     <!-- Сетка расписания -->
@@ -137,7 +137,7 @@
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Аудитория</label>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Корпус</label>
             <select id="room" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500"></select>
           </div>
         </div>
@@ -169,7 +169,7 @@
 
       <div class="flex border-b border-slate-800 mb-4 gap-2">
         <button onclick="switchPresetTab('subject')" id="tab-subject" class="pb-2 px-3 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400">Предметы</button>
-        <button onclick="switchPresetTab('room')" id="tab-room" class="pb-2 px-3 text-sm font-semibold text-slate-400">Кабинеты</button>
+        <button onclick="switchPresetTab('room')" id="tab-room" class="pb-2 px-3 text-sm font-semibold text-slate-400">Корпусы</button>
         <button onclick="switchPresetTab('teacher')" id="tab-teacher" class="pb-2 px-3 text-sm font-semibold text-slate-400">Преподаватели</button>
       </div>
 
@@ -264,7 +264,6 @@
         return;
       }
 
-      // Равномерное распределение 6 кнопок по всей ширине сеткой
       nav.innerHTML = `
         <div class="grid grid-cols-6 gap-1.5 sm:gap-2 w-full">
           ${days.map(day => {
@@ -349,7 +348,7 @@
             <div>
               <div class="text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-0.5">Сейчас идет (${currentPair.type || 'Пара'})</div>
               <div class="font-bold text-white text-base">${currentPair.subject}</div>
-              <div class="text-xs text-slate-400 mt-1">${currentPair.room ? '🚪 Кабинет ' + currentPair.room : ''} ${currentPair.teacher ? '• 👨‍🏫 ' + currentPair.teacher : ''}</div>
+              <div class="text-xs text-slate-400 mt-1">${currentPair.room ? '🏢 Корпус: ' + currentPair.room : ''} ${currentPair.teacher ? '• 👨‍🏫 ' + currentPair.teacher : ''}</div>
             </div>
             <div class="text-right shrink-0">
               <div class="text-xl md:text-2xl font-black text-emerald-400">${leftMinutes} мин</div>
@@ -363,7 +362,7 @@
             <div>
               <div class="text-xs font-semibold text-amber-400 uppercase tracking-wider mb-0.5">Перерыв / Скоро пара</div>
               <div class="font-bold text-white text-base">${nextPair.subject}</div>
-              <div class="text-xs text-slate-400 mt-1">${nextPair.room ? '🚪 Кабинет ' + nextPair.room : ''} ${nextPair.type ? '• ' + nextPair.type : ''}</div>
+              <div class="text-xs text-slate-400 mt-1">${nextPair.room ? '🏢 Корпус: ' + nextPair.room : ''} ${nextPair.type ? '• ' + nextPair.type : ''}</div>
             </div>
             <div class="text-right shrink-0">
               <div class="text-xl md:text-2xl font-black text-amber-400">${untilMinutes} мин</div>
@@ -430,7 +429,7 @@
 
           <div class="flex flex-wrap items-center gap-2 text-xs">
             ${item.type ? `<span class="px-2 py-0.5 rounded-md border font-medium ${getTypeStyle(item.type)}">${item.type}</span>` : ''}
-            ${item.room ? `<span class="text-slate-400">🚪 Каб. ${item.room}</span>` : ''}
+            ${item.room ? `<span class="text-slate-400">🏢 Корпус: ${item.room}</span>` : ''}
           </div>
 
           ${item.teacher ? `<div class="mt-2 pt-2 border-t border-slate-800/60 text-xs text-slate-400">👨‍🏫 ${item.teacher}</div>` : ''}
