@@ -94,7 +94,7 @@
     </button>
   </div>
 
-  <!-- МОДАЛКА 1: Форма пары -->
+  <!-- МОДАЛКА 1: Добавление/Редактирование пары -->
   <div id="modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-slate-950/80 backdrop-blur-md transition-all">
     <div class="glass-modal w-full max-w-lg rounded-t-3xl md:rounded-3xl p-6 shadow-2xl border-t md:border border-slate-700/50 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-6">
@@ -117,14 +117,33 @@
           </select>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Начало</label>
-            <input type="text" id="time_start" placeholder="08:30" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+        <!-- УДОБНЫЙ ВЫБОР ВРЕМЕНИ ИЛИ ПАРЫ -->
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Номер пары / Время</label>
+            <button type="button" onclick="toggleCustomTime()" id="time-toggle-btn" class="text-[11px] text-indigo-400 hover:underline">Указать время вручную</button>
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Окончание</label>
-            <input type="text" id="time_end" placeholder="10:05" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
+
+          <!-- Вариант 1: Выбор из стандартных звонков -->
+          <div id="pair-preset-container">
+            <select id="pair_slot" onchange="onSlotChange()" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 font-medium">
+              <option value="08:30-10:05">1 пара (08:30 – 10:05)</option>
+              <option value="10:15-11:50">2 пара (10:15 – 11:50)</option>
+              <option value="12:10-13:45">3 пара (12:10 – 13:45)</option>
+              <option value="14:00-15:35">4 пара (14:00 – 15:35)</option>
+              <option value="15:45-17:20">5 пара (15:45 – 17:20)</option>
+              <option value="17:30-19:05">6 пара (17:30 – 19:05)</option>
+            </select>
+          </div>
+
+          <!-- Вариант 2: Ручной ввод (скрыт по умолчанию) -->
+          <div id="custom-time-container" class="hidden grid grid-cols-2 gap-3 mt-2">
+            <div>
+              <input type="text" id="time_start" placeholder="08:30" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm">
+            </div>
+            <div>
+              <input type="text" id="time_end" placeholder="10:05" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm">
+            </div>
           </div>
         </div>
 
@@ -135,7 +154,7 @@
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Тип пары</label>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Тип занятия</label>
             <select id="type" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
               <option value="Лекция">Лекция</option>
               <option value="Практика">Практика</option>
@@ -145,7 +164,7 @@
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Корпус</label>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Корпус / Аудитория</label>
             <select id="room" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500"></select>
           </div>
         </div>
@@ -180,7 +199,7 @@
 
         <div>
           <label class="block text-xs font-semibold text-amber-400 uppercase tracking-wider mb-2">Предмет</label>
-          <input type="text" id="change-item-subject" readonly class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-3 text-slate-400 font-bold focus:outline-none">
+          <input type="text" id="change-item-subject" readonly class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-3 text-slate-300 font-bold focus:outline-none">
         </div>
 
         <div>
@@ -193,8 +212,8 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Примечание (например, другой корпус или время)</label>
-          <input type="text" id="change_note" placeholder="Например: В ауд. 302, со 2 недели или Перенесено на 14:00" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Примечание (например, перенесено на 2-ю пару или другой корпус)</label>
+          <input type="text" id="change_note" placeholder="Например: Перенесено в Корпус 2, ауд. 302" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500">
         </div>
 
         <div class="flex gap-3 pt-4">
@@ -276,6 +295,7 @@
     let presets = [];
     let currentPresetTab = 'subject';
     let isDesktop = window.innerWidth >= 1280;
+    let isCustomTime = false;
 
     function getWeekDays() {
       const now = new Date();
@@ -321,6 +341,23 @@
         renderSchedule();
       }
     });
+
+    function toggleCustomTime() {
+      isCustomTime = !isCustomTime;
+      const presetContainer = document.getElementById('pair-preset-container');
+      const customContainer = document.getElementById('custom-time-container');
+      const btn = document.getElementById('time-toggle-btn');
+
+      if (isCustomTime) {
+        presetContainer.classList.add('hidden');
+        customContainer.classList.remove('hidden');
+        btn.innerText = 'Выбрать готовую пару';
+      } else {
+        presetContainer.classList.remove('hidden');
+        customContainer.classList.add('hidden');
+        btn.innerText = 'Указать время вручную';
+      }
+    }
 
     function getTypeStyle(type) {
       switch(type) {
@@ -555,6 +592,13 @@
       document.getElementById('item-id').value = '';
       document.getElementById('modal-title').innerText = 'Новая пара';
       document.getElementById('day_of_week').value = activeDay;
+      
+      // Сброс ручного режима
+      isCustomTime = false;
+      document.getElementById('pair-preset-container').classList.remove('hidden');
+      document.getElementById('custom-time-container').classList.add('hidden');
+      document.getElementById('time-toggle-btn').innerText = 'Указать время вручную';
+
       document.getElementById('modal').classList.remove('hidden');
     }
 
@@ -562,7 +606,6 @@
       document.getElementById('modal').classList.add('hidden');
     }
 
-    /* Модалка изменения пары */
     function openChangeModal(id) {
       const item = allSchedule.find(i => i.id === id);
       if(!item) return;
@@ -602,8 +645,24 @@
       document.getElementById('item-id').value = item.id;
       document.getElementById('modal-title').innerText = 'Редактировать пару';
       document.getElementById('day_of_week').value = item.day_of_week;
-      document.getElementById('time_start').value = item.time_start;
-      document.getElementById('time_end').value = item.time_end;
+      
+      const timeStr = `${item.time_start}-${item.time_end}`;
+      const presetSelect = document.getElementById('pair_slot');
+
+      // Проверяем, подходит ли под готовый слот
+      if (Array.from(presetSelect.options).some(opt => opt.value === timeStr)) {
+        presetSelect.value = timeStr;
+        isCustomTime = false;
+        document.getElementById('pair-preset-container').classList.remove('hidden');
+        document.getElementById('custom-time-container').classList.add('hidden');
+      } else {
+        document.getElementById('time_start').value = item.time_start;
+        document.getElementById('time_end').value = item.time_end;
+        isCustomTime = true;
+        document.getElementById('pair-preset-container').classList.add('hidden');
+        document.getElementById('custom-time-container').classList.remove('hidden');
+      }
+
       document.getElementById('subject').value = item.subject;
       document.getElementById('type').value = item.type || 'Лекция';
       document.getElementById('room').value = item.room || '';
@@ -615,12 +674,23 @@
     async function saveItem(e) {
       e.preventDefault();
 
+      let start = '';
+      let end = '';
+
+      if (isCustomTime) {
+        start = document.getElementById('time_start').value;
+        end = document.getElementById('time_end').value;
+      } else {
+        const slotValue = document.getElementById('pair_slot').value;
+        [start, end] = slotValue.split('-');
+      }
+
       const id = document.getElementById('item-id').value;
       const payload = {
         day_of_week: parseInt(document.getElementById('day_of_week').value),
         pair_number: 1,
-        time_start: document.getElementById('time_start').value,
-        time_end: document.getElementById('time_end').value,
+        time_start: start,
+        time_end: end,
         subject: document.getElementById('subject').value,
         type: document.getElementById('type').value,
         room: document.getElementById('room').value,
