@@ -19,7 +19,7 @@
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
     .glass { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .glass-modal { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.12); }
+    .glass-modal { background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.12); }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
@@ -41,27 +41,36 @@
         </div>
       </div>
 
-      <button onclick="openModal()" class="hidden md:flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all active:scale-95">
-        <span>+</span> Добавить пару
-      </button>
+      <div class="flex items-center gap-2">
+        <button onclick="openPresetsModal()" class="glass hover:bg-slate-800 text-slate-200 font-semibold px-3 py-2.5 md:px-4 rounded-xl transition-all flex items-center gap-2 text-sm">
+          <span>⚙️</span> <span class="hidden md:inline">Справочники</span>
+        </button>
+        <button onclick="openModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all active:scale-95 text-sm flex items-center gap-1">
+          <span>+</span> <span class="hidden md:inline">Добавить пару</span>
+        </button>
+      </div>
     </div>
   </header>
 
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 pt-6">
-    <!-- Навигация по дням (мобильная / планшетная) -->
+    <!-- Навигация по дням -->
     <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-4 md:pb-6" id="days-nav"></div>
 
-    <!-- Контейнер сетки расписания -->
-    <!-- Мобилки: 1 колонка. ПК (xl): 6 колонок (Недельный обзор) -->
+    <!-- Сетка расписания -->
     <div id="schedule-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4"></div>
   </main>
 
-  <!-- Плавающая кнопка добавить для мобилок -->
-  <button onclick="openModal()" class="md:hidden fixed bottom-6 right-6 z-40 w-14 h-14 bg-indigo-600 active:bg-indigo-500 text-white rounded-2xl flex items-center justify-center text-2xl shadow-xl shadow-indigo-600/40 border border-indigo-400/30 transition-all active:scale-90">
-    +
-  </button>
+  <!-- Кнопки для мобилок внизу -->
+  <div class="md:hidden fixed bottom-6 right-6 z-40 flex items-center gap-3">
+    <button onclick="openPresetsModal()" class="w-12 h-12 glass text-white rounded-2xl flex items-center justify-center text-xl shadow-xl border border-slate-700/50 active:scale-90">
+      ⚙️
+    </button>
+    <button onclick="openModal()" class="w-14 h-14 bg-indigo-600 active:bg-indigo-500 text-white rounded-2xl flex items-center justify-center text-2xl shadow-xl shadow-indigo-600/40 border border-indigo-400/30 active:scale-90">
+      +
+    </button>
+  </div>
 
-  <!-- Модальное окно (Форма добавления/редактирования) -->
+  <!-- МОДАЛКА 1: Форма пары -->
   <div id="modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-slate-950/80 backdrop-blur-md transition-all">
     <div class="glass-modal w-full max-w-lg rounded-t-3xl md:rounded-3xl p-6 shadow-2xl border-t md:border border-slate-700/50 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-6">
@@ -87,17 +96,17 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Начало</label>
-            <input type="text" id="time_start" placeholder="08:30" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500">
+            <input type="text" id="time_start" placeholder="08:30" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Окончание</label>
-            <input type="text" id="time_end" placeholder="10:05" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500">
+            <input type="text" id="time_end" placeholder="10:05" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500">
           </div>
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Предмет</label>
-          <input type="text" id="subject" placeholder="Высшая математика" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500">
+          <select id="subject" required class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500"></select>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -108,18 +117,17 @@
               <option value="Практика">Практика</option>
               <option value="Лабораторная">Лабораторная</option>
               <option value="Семинар">Семинар</option>
-
             </select>
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Аудитория</label>
-            <input type="text" id="room" placeholder="302-А" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500">
+            <select id="room" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500"></select>
           </div>
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Преподаватель</label>
-          <input type="text" id="teacher" placeholder="Иванов И. И." class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500">
+          <select id="teacher" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500"></select>
         </div>
 
         <div class="flex gap-3 pt-4">
@@ -134,11 +142,36 @@
     </div>
   </div>
 
+  <!-- МОДАЛКА 2: Редактор Справочников -->
+  <div id="presets-modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-slate-950/80 backdrop-blur-md transition-all">
+    <div class="glass-modal w-full max-w-lg rounded-t-3xl md:rounded-3xl p-6 shadow-2xl border-t md:border border-slate-700/50 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold text-white">⚙️ Управление справочниками</h3>
+        <button onclick="closePresetsModal()" class="text-slate-400 hover:text-white text-xl p-2">✕</button>
+      </div>
+
+      <!-- Табы выбoра справочника -->
+      <div class="flex border-b border-slate-800 mb-4 gap-2">
+        <button onclick="switchPresetTab('subject')" id="tab-subject" class="pb-2 px-3 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400">Предметы</button>
+        <button onclick="switchPresetTab('room')" id="tab-room" class="pb-2 px-3 text-sm font-semibold text-slate-400">Кабинеты</button>
+        <button onclick="switchPresetTab('teacher')" id="tab-teacher" class="pb-2 px-3 text-sm font-semibold text-slate-400">Преподаватели</button>
+      </div>
+
+      <!-- Форма добавления пресета -->
+      <div class="flex gap-2 mb-4">
+        <input type="text" id="new-preset-name" placeholder="Название..." class="flex-1 bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 text-sm">
+        <button onclick="addPreset()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 rounded-xl text-sm transition">Добавить</button>
+      </div>
+
+      <!-- Список значений -->
+      <div id="presets-list" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+    </div>
+  </div>
+
   <script>
-    // ВСТАВЬ СВОИ ДАННЫЕ ИЗ SUPABASE:
     const SUPABASE_URL = 'https://wiowprtgsueqzdgtdjqr.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_BBc7NEU8ZgTaWuwsKYC-1A_43vfGWTs';
-    
+
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const daysList = [
@@ -152,6 +185,8 @@
 
     let activeDay = 1;
     let allSchedule = [];
+    let presets = [];
+    let currentPresetTab = 'subject';
     let isDesktop = window.innerWidth >= 1280;
 
     window.addEventListener('resize', () => {
@@ -187,16 +222,30 @@
     }
 
     async function loadData() {
-      const { data } = await _supabase.from('schedule').select('*').order('time_start');
-      allSchedule = data || [];
+      const { data: scheduleData } = await _supabase.from('schedule').select('*').order('time_start');
+      const { data: presetsData } = await _supabase.from('presets').select('*').order('name');
+      
+      allSchedule = scheduleData || [];
+      presets = presetsData || [];
+
+      populateSelectOptions();
       renderSchedule();
+    }
+
+    function populateSelectOptions() {
+      const subjects = presets.filter(p => p.type === 'subject');
+      const rooms = presets.filter(p => p.type === 'room');
+      const teachers = presets.filter(p => p.type === 'teacher');
+
+      document.getElementById('subject').innerHTML = subjects.map(s => `<option value="${s.name}">${s.name}</option>`).join('') || '<option value="">(Список пуст)</option>';
+      document.getElementById('room').innerHTML = '<option value="">Не указано</option>' + rooms.map(r => `<option value="${r.name}">${r.name}</option>`).join('');
+      document.getElementById('teacher').innerHTML = '<option value="">Не указано</option>' + teachers.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
     }
 
     function renderSchedule() {
       const container = document.getElementById('schedule-container');
 
       if (isDesktop) {
-        // Десктоп режим: 6 колонок под каждый день недели
         container.innerHTML = daysList.map(day => {
           const dayItems = allSchedule.filter(i => i.day_of_week === day.id);
           return `
@@ -211,7 +260,6 @@
           `;
         }).join('');
       } else {
-        // Мобильный / Таншетный режим: Выбранный день
         const currentItems = allSchedule.filter(i => i.day_of_week === activeDay);
         container.innerHTML = renderDayItemsHTML(currentItems);
       }
@@ -315,6 +363,63 @@
         await _supabase.from('schedule').delete().eq('id', id);
         loadData();
       }
+    }
+
+    /* ЛОГИКА СПРАВОЧНИКОВ */
+    function openPresetsModal() {
+      renderPresetsList();
+      document.getElementById('presets-modal').classList.remove('hidden');
+    }
+
+    function closePresetsModal() {
+      document.getElementById('presets-modal').classList.add('hidden');
+    }
+
+    function switchPresetTab(tab) {
+      currentPresetTab = tab;
+      ['subject', 'room', 'teacher'].forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        if(t === tab) {
+          btn.className = "pb-2 px-3 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400";
+        } else {
+          btn.className = "pb-2 px-3 text-sm font-semibold text-slate-400";
+        }
+      });
+      renderPresetsList();
+    }
+
+    function renderPresetsList() {
+      const list = document.getElementById('presets-list');
+      const filtered = presets.filter(p => p.type === currentPresetTab);
+
+      if(!filtered.length) {
+        list.innerHTML = `<div class="text-xs text-slate-500 text-center py-4">Список пуст</div>`;
+        return;
+      }
+
+      list.innerHTML = filtered.map(p => `
+        <div class="flex justify-between items-center bg-slate-900/60 border border-slate-800 px-3 py-2 rounded-xl text-sm">
+          <span class="text-slate-200">${p.name}</span>
+          <button onclick="deletePreset('${p.id}')" class="text-xs text-rose-400 hover:text-rose-300">Удалить</button>
+        </div>
+      `).join('');
+    }
+
+    async function addPreset() {
+      const input = document.getElementById('new-preset-name');
+      const name = input.value.trim();
+      if(!name) return;
+
+      await _supabase.from('presets').insert([{ type: currentPresetTab, name }]);
+      input.value = '';
+      await loadData();
+      renderPresetsList();
+    }
+
+    async function deletePreset(id) {
+      await _supabase.from('presets').delete().eq('id', id);
+      await loadData();
+      renderPresetsList();
     }
 
     // Инициализация
