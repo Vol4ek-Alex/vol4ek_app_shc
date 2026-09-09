@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Расписание</title>
+  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Расписание%22,%22short_name%22:%22Расписание%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22#ffffff%22,%22theme_color%22:%22#4f46e5%22}">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4 font-sans text-gray-800">
+  <div class="max-w-md mx-auto">
+    <h1 class="text-2xl font-bold text-center text-indigo-600 mb-4">📅 Расписание занятий</h1>
+    
+    <!-- Переключатель дней -->
+    <div class="flex overflow-x-auto gap-2 mb-4 pb-2" id="days-nav"></div>
+
+    <!-- Список пар -->
+    <div id="schedule-list" class="space-y-3"></div>
+
+    <!-- Кнопка добавить -->
+    <button onclick="openForm()" class="w-full mt-6 bg-indigo-600 text-white py-3 rounded-xl font-semibold shadow-lg hover:bg-indigo-700 transition">+ Добавить пару</button>
+  </div>
+
+  <!-- Модалка редактирования -->
+  <div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-sm space-y-3">
+      <h3 id="modal-title" class="text-lg font-bold">Пара</h3>
+      <input type="hidden" id="item-id">
+      <select id="day" class="w-full border p-2 rounded-lg">
+        <option value="1">Понедельник</option><option value="2">Вторник</option>
+        <option value="3">Среда</option><option value="4">Четверг</option>
+        <option value="5">Пятница</option><option value="6">Суббота</option>
+      </select>
+      <div class="flex gap-2">
+        <input id="time_start" placeholder="08:30" class="w-1/2 border p-2 rounded-lg">
+        <input id="time_end" placeholder="10:05" class="w-1/2 border p-2 rounded-lg">
+      </div>
+      <input id="subject" placeholder="Предмет" class="w-full border p-2 rounded-lg">
+      <input id="type" placeholder="Тип (Лекция/Практика)" class="w-full border p-2 rounded-lg">
+      <input id="room" placeholder="Кабинет/Аудитория" class="w-full border p-2 rounded-lg">
+      <input id="teacher" placeholder="Преподаватель" class="w-full border p-2 rounded-lg">
+      
+      <div class="flex gap-2 pt-2">
+        <button onclick="saveItem()" class="flex-1 bg-indigo-600 text-white py-2 rounded-lg">Сохранить</button>
+        <button onclick="closeForm()" class="bg-gray-200 py-2 px-4 rounded-lg">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ВСТАВЬ СВОИ ДАННЫЕ ИЗ SUPABASE СЮДА:
+    const SUPABASE_URL = 'https://wiowprtgsueqzdgtdjqr.supabase.co/rest/v1/';
+    const SUPABASE_KEY = 'sb_publishable_BBc7NEU8ZgTaWuwsKYC-1A_43vfGWTs';
+    
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+    let currentDay = 1;
+    let items = [];
+
+    function renderDays() {
+      document.getElementById('days-nav').innerHTML = days.map((d, i) => 
+        `<button onclick="changeDay(${i+1})" class="px-4 py-2 rounded-xl font-medium ${currentDay === i+1 ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600'}">${d}</button>`
+      ).join('');
+    }
+
+    async function loadData() {
+      const { data } = await _supabase.from('schedule').select('*').eq('day_of_week', currentDay).order('time_start');
+      items = data || [];
+      renderSchedule();
+    }
+
+    function renderSchedule() {
+      const list = document.getElementById('schedule-list');
+      if(!items.length) { list.innerHTML = '<div class="text-center py-8 text-gray-400">Выходной / Нет пар</div>'; return; }
+      
+      list.innerHTML = items.map(item => `
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 relative">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">${item.time_start} - ${item.time_end}</span>
+            <div class="space-x-2">
+              <button onclick="editItem('${item.id}')" class="text-sm text-gray-400">✏️</button>
+              <button onclick="deleteItem('${item.id}')" class="text-sm text-red-400">🗑️</button>
+            </div>
+          </div>
+          <h4 class="font-bold text-lg mt-1">${item.subject}</h4>
+          <p class="text-sm text-gray-500">${item.type || ''} ${item.room ? '• Каб. ' + item.room : ''}</p>
+          ${item.teacher ? `<p class="text-xs text-gray-400 mt-1">👨‍🏫 ${item.teacher}</p>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function changeDay(day) { currentDay = day; renderDays(); loadData(); }
+    function openForm() { document.getElementById('item-id').value = ''; document.getElementById('modal').classList.remove('hidden'); }
+    function closeForm() { document.getElementById('modal').classList.add('hidden'); }
+
+    function editItem(id) {
+      const item = items.find(i => i.id === id);
+      document.getElementById('item-id').value = item.id;
+      document.getElementById('day').value = item.day_of_week;
+      document.getElementById('time_start').value = item.time_start;
+      document.getElementById('time_end').value = item.time_end;
+      document.getElementById('subject').value = item.subject;
+      document.getElementById('type').value = item.type || '';
+      document.getElementById('room').value = item.room || '';
+      document.getElementById('teacher').value = item.teacher || '';
+      document.getElementById('modal').classList.remove('hidden');
+    }
+
+    async function saveItem() {
+      const id = document.getElementById('item-id').value;
+      const payload = {
+        day_of_week: parseInt(document.getElementById('day').value),
+        pair_number: 1,
+        time_start: document.getElementById('time_start').value,
+        time_end: document.getElementById('time_end').value,
+        subject: document.getElementById('subject').value,
+        type: document.getElementById('type').value,
+        room: document.getElementById('room').value,
+        teacher: document.getElementById('teacher').value,
+      };
+
+      if(id) await _supabase.from('schedule').update(payload).eq('id', id);
+      else await _supabase.from('schedule').insert([payload]);
+
+      closeForm();
+      loadData();
+    }
+
+    async function deleteItem(id) {
+      if(confirm('Удалить пару?')) {
+        await _supabase.from('schedule').delete().eq('id', id);
+        loadData();
+      }
+    }
+
+    renderDays();
+    loadData();
+  </script>
+</body>
+</html>
