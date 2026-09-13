@@ -1,58 +1,80 @@
 <!DOCTYPE html>
-<html lang="ru" class="h-full bg-[#07080d] text-slate-100">
+<html lang="ru" class="h-full bg-[#05060a] text-slate-100 selection:bg-indigo-500 selection:text-white">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Расписание</title>
+  <title>Академия — Расписание</title>
   
-  <!-- PWA Meta tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#07080d">
-  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Расписание%22,%22short_name%22:%22Расписание%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22#07080d%22,%22theme_color%22:%22#07080d%22}">
+  <meta name="theme-color" content="#05060a">
 
-  <!-- Tailwind & Supabase SDK -->
+  <!-- Tailwind CSS, Supabase & html2canvas -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  
+  <!-- Шрифты Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      background-color: #05060a;
+    }
     
-    .glass { 
-      background: rgba(15, 17, 26, 0.7); 
-      backdrop-filter: blur(24px); 
-      -webkit-backdrop-filter: blur(24px); 
-      border: 1px solid rgba(255, 255, 255, 0.08); 
+    /* Сверхсовременный Glassmorphism */
+    .glass-nav { 
+      background: rgba(8, 10, 18, 0.75); 
+      backdrop-filter: blur(20px); 
+      -webkit-backdrop-filter: blur(20px); 
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06); 
     }
-    .glass-modal { 
-      background: rgba(13, 15, 24, 0.96); 
-      backdrop-filter: blur(36px); 
-      -webkit-backdrop-filter: blur(36px); 
-      border: 1px solid rgba(255, 255, 255, 0.12); 
+    
+    .glass-card { 
+      background: rgba(13, 16, 28, 0.6); 
+      backdrop-filter: blur(16px); 
+      -webkit-backdrop-filter: blur(16px); 
+      border: 1px solid rgba(255, 255, 255, 0.06); 
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .glass-card {
-      background: rgba(20, 24, 38, 0.55);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+    
     .glass-card:hover {
-      border-color: rgba(129, 140, 248, 0.35);
-      background: rgba(28, 33, 53, 0.75);
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px -10px rgba(79, 70, 229, 0.2);
+      border-color: rgba(129, 140, 248, 0.3);
+      background: rgba(19, 23, 40, 0.8);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 36px -12px rgba(99, 102, 241, 0.18);
     }
 
-    .glow-bg {
+    .glass-modal { 
+      background: rgba(10, 12, 22, 0.94); 
+      backdrop-filter: blur(30px); 
+      -webkit-backdrop-filter: blur(30px); 
+      border: 1px solid rgba(255, 255, 255, 0.1); 
+    }
+
+    /* Флеш фоновые свечения (Background Lights) */
+    .ambient-glow-1 {
       position: fixed;
-      top: -150px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 900px;
+      top: -200px;
+      left: 20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ambient-glow-2 {
+      position: fixed;
+      bottom: -150px;
+      right: 10%;
+      width: 500px;
       height: 500px;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(168, 85, 247, 0.1) 35%, rgba(0, 0, 0, 0) 70%);
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
       pointer-events: none;
       z-index: 0;
     }
@@ -61,80 +83,109 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="h-full flex flex-col pb-24 md:pb-10 pt-safe antialiased selection:bg-indigo-500 selection:text-white relative overflow-x-hidden">
+<body class="h-full flex flex-col pb-24 md:pb-12 relative overflow-x-hidden text-slate-100">
 
-  <!-- Аура заднего фона -->
-  <div class="glow-bg"></div>
+  <!-- Декоративные ауры -->
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
 
-  <!-- Шапка -->
-  <header class="sticky top-0 z-30 glass border-b border-white/5 px-4 py-4 md:px-8">
+  <!-- ШАПКА САЙТА -->
+  <header class="sticky top-0 z-40 glass-nav px-4 md:px-8 py-3.5">
     <div class="max-w-7xl mx-auto flex justify-between items-center relative z-10">
+      
+      <!-- Логотип -->
       <div class="flex items-center gap-3.5">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 p-[1.5px] shadow-lg shadow-indigo-500/25">
-          <div class="w-full h-full bg-[#0c0d14] rounded-[14px] flex items-center justify-center text-xl">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 p-[1.5px] shadow-lg shadow-indigo-500/20">
+          <div class="w-full h-full bg-[#080911] rounded-[14px] flex items-center justify-center text-lg">
             🎓
           </div>
         </div>
         <div>
-          <h1 class="text-lg md:text-xl font-extrabold bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent tracking-tight">
+          <h1 class="text-base md:text-lg font-black bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent tracking-tight leading-tight">
             Академия
           </h1>
-          <p class="text-[10px] text-indigo-400/90 font-bold tracking-widest uppercase">Расписание занятий</p>
+          <p class="text-[10px] text-indigo-400/90 font-extrabold tracking-widest uppercase">Расписание занятий</p>
         </div>
       </div>
 
-      <!-- Кнопки в шапке -->
+      <!-- Кнопки управления (Desktop) -->
       <div class="hidden md:flex items-center gap-3">
-        <button onclick="shareScheduleImage()" class="glass hover:bg-white/10 text-indigo-300 font-semibold px-4 py-2.5 rounded-2xl transition-all flex items-center gap-2 text-xs border border-indigo-500/30 hover:border-indigo-500/60 active:scale-95 shadow-lg shadow-indigo-950/40">
+        <button onclick="shareScheduleImage()" class="glass-card hover:bg-white/10 text-indigo-300 font-bold px-4 py-2.5 rounded-2xl transition-all flex items-center gap-2 text-xs border border-indigo-500/30 shadow-md">
           <span>📸</span> <span>Поделиться</span>
         </button>
-        <button onclick="openPresetsModal()" class="glass hover:bg-white/10 text-slate-200 font-semibold px-4 py-2.5 rounded-2xl transition-all flex items-center gap-2 text-xs border border-white/10 active:scale-95">
+        <button onclick="openPresetsModal()" class="glass-card hover:bg-white/10 text-slate-300 font-bold px-4 py-2.5 rounded-2xl transition-all flex items-center gap-2 text-xs border border-white/10">
           <span>⚙️</span> <span>Справочники</span>
         </button>
-        <button onclick="openModal()" class="bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold px-5 py-2.5 rounded-2xl shadow-lg shadow-indigo-600/30 transition-all active:scale-95 text-xs flex items-center gap-2">
+        <button onclick="openModal()" class="bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold px-5 py-2.5 rounded-2xl shadow-lg shadow-indigo-600/30 transition-all active:scale-95 text-xs flex items-center gap-1.5">
           <span class="text-base leading-none">+</span> <span>Добавить пару</span>
         </button>
       </div>
     </div>
   </header>
 
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 pt-6 relative z-10">
+  <!-- ОСНОВНОЙ КОНТЕНТ -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 pt-6 relative z-10 space-y-6">
     
-    <!-- ПРИВЕТСТВИЕ -->
-    <div class="mb-6 glass p-6 rounded-3xl border border-indigo-500/20 bg-gradient-to-r from-indigo-950/40 via-purple-950/20 to-transparent flex items-center justify-between shadow-2xl shadow-indigo-950/30">
-      <div>
-        <div class="text-[11px] font-bold text-indigo-400 uppercase tracking-widest mb-1 flex items-center gap-2" id="greeting-date">
-          <span>Сегодня</span>
+    <!-- ПРИВЕТСТВИЕ И ТОП-КАРТОЧКИ -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      
+      <!-- Карточка приветствия -->
+      <div class="lg:col-span-2 glass-card p-6 rounded-3xl border border-indigo-500/20 bg-gradient-to-br from-indigo-950/30 via-slate-900/40 to-transparent flex items-center justify-between shadow-2xl">
+        <div>
+          <div class="text-[11px] font-black text-indigo-400 uppercase tracking-widest mb-1.5 flex items-center gap-2" id="greeting-date">
+            <span>Загрузка даты...</span>
+          </div>
+          <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight flex items-center gap-2.5">
+            Привет, Виктория! <span class="inline-block animate-bounce">✨</span>
+          </h2>
+          <p class="text-xs md:text-sm text-slate-300 mt-1.5 font-medium">Желаю отличного, легкого и продуктивного дня! 🌸</p>
         </div>
-        <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
-          Привет, Виктория! <span class="inline-block animate-bounce">✨</span>
-        </h2>
-        <p class="text-xs md:text-sm text-slate-300 mt-1.5 font-medium">Желаю отличного, легкого и продуктивного дня! 🌸</p>
+        <div class="hidden sm:flex w-14 h-14 rounded-2xl bg-white/5 items-center justify-center text-3xl border border-white/10 shadow-inner">
+          ☕
+        </div>
       </div>
-      <div class="hidden sm:flex w-14 h-14 rounded-2xl bg-white/5 items-center justify-center text-3xl border border-white/10 shadow-inner">
-        ☕
+
+      <!-- ВИДЖЕТ: ОБРАТНЫЙ ОТСЧЕТ ДО 24 ЧИСЛА -->
+      <div class="glass-card p-6 rounded-3xl border border-purple-500/20 bg-gradient-to-br from-purple-950/30 via-slate-900/40 to-transparent flex flex-col justify-between shadow-2xl">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-[11px] font-black text-purple-400 uppercase tracking-widest">Сессия / Семестр</span>
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 font-bold">До 24-го числа</span>
+        </div>
+        
+        <div class="my-2">
+          <div class="text-xs text-slate-400 font-medium mb-1">До окончания осталось:</div>
+          <div id="countdown-timer" class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+            <!-- Заполняется динамически -->
+            <span class="text-purple-400">00</span>д <span class="text-purple-400">00</span>ч <span class="text-purple-400">00</span>м
+          </div>
+        </div>
+
+        <div class="w-full bg-white/5 h-2 rounded-full overflow-hidden border border-white/5 mt-2">
+          <div id="countdown-progress" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-full w-0 transition-all duration-1000"></div>
+        </div>
       </div>
+
     </div>
 
-    <!-- ВИДЖЕТ ТЕКУЩЕГО СТАТУСА -->
-    <div id="status-widget" class="mb-6"></div>
+    <!-- ВИДЖЕТ ТЕКУЩЕГО СТАТУСА (ПАРЫ СЕЙЧАС) -->
+    <div id="status-widget"></div>
 
-    <!-- Навигация по дням с датами -->
-    <div id="days-nav" class="mb-6"></div>
+    <!-- НАВИГАЦИЯ ПО ДНЯМ -->
+    <div id="days-nav"></div>
 
-    <!-- Сетка расписания -->
+    <!-- СЕТКА РАСПИСАНИЯ -->
     <div id="schedule-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4"></div>
   </main>
 
-  <!-- Кнопки для мобилок внизу -->
+  <!-- МОБИЛЬНАЯ ПАНЕЛЬ КНОПОК -->
   <div class="md:hidden fixed bottom-6 right-6 z-40 flex items-center gap-3">
-    <button onclick="shareScheduleImage()" class="w-12 h-12 glass text-indigo-300 border border-indigo-500/40 rounded-2xl flex items-center justify-center text-xl shadow-2xl active:scale-90">
+    <button onclick="shareScheduleImage()" class="w-12 h-12 glass-card text-indigo-300 border border-indigo-500/40 rounded-2xl flex items-center justify-center text-xl shadow-2xl active:scale-90">
       📸
     </button>
-    <button onclick="openPresetsModal()" class="w-12 h-12 glass text-white rounded-2xl flex items-center justify-center text-xl shadow-2xl border border-white/10 active:scale-90">
+    <button onclick="openPresetsModal()" class="w-12 h-12 glass-card text-white rounded-2xl flex items-center justify-center text-xl shadow-2xl border border-white/10 active:scale-90">
       ⚙️
     </button>
-    <button onclick="openModal()" class="w-14 h-14 bg-gradient-to-tr from-indigo-600 to-violet-500 active:from-indigo-500 active:to-violet-400 text-white rounded-2xl flex items-center justify-center text-2xl shadow-xl shadow-indigo-600/50 border border-indigo-400/40 active:scale-90">
+    <button onclick="openModal()" class="w-14 h-14 bg-gradient-to-tr from-indigo-600 to-purple-600 active:from-indigo-500 active:to-purple-500 text-white rounded-2xl flex items-center justify-center text-2xl shadow-xl shadow-indigo-600/50 border border-indigo-400/40 active:scale-90">
       +
     </button>
   </div>
@@ -143,16 +194,16 @@
   <div id="modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-md transition-all">
     <div class="glass-modal w-full max-w-lg rounded-t-3xl md:rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto border border-white/10">
       <div class="flex justify-between items-center mb-6">
-        <h3 id="modal-title" class="text-xl font-bold text-white">Новое занятие</h3>
-        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center text-sm transition">✕</button>
+        <h3 id="modal-title" class="text-lg font-extrabold text-white tracking-tight">Новое занятие</h3>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center text-xs transition">✕</button>
       </div>
 
       <form onsubmit="saveItem(event)" class="space-y-4">
         <input type="hidden" id="item-id">
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">День недели</label>
-          <select id="day_of_week" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition text-sm">
+          <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">День недели</label>
+          <select id="day_of_week" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition text-sm font-medium">
             <option value="1">Понедельник</option>
             <option value="2">Вторник</option>
             <option value="3">Среда</option>
@@ -164,12 +215,12 @@
 
         <div>
           <div class="flex justify-between items-center mb-2">
-            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Номер пары / Время</label>
-            <button type="button" onclick="toggleCustomTime()" id="time-toggle-btn" class="text-[11px] text-indigo-400 hover:text-indigo-300 font-semibold transition">Указать время вручную</button>
+            <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Номер пары / Время</label>
+            <button type="button" onclick="toggleCustomTime()" id="time-toggle-btn" class="text-[11px] text-indigo-400 hover:text-indigo-300 font-bold transition">Указать время вручную</button>
           </div>
 
           <div id="pair-preset-container">
-            <select id="pair_slot" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 font-medium text-sm transition">
+            <select id="pair_slot" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 font-medium text-sm transition">
               <option value="08:00-09:35">1 пара (08:00 - 09:35)</option>
               <option value="09:50-11:25">2 пара (09:50 - 11:25)</option>
               <option value="11:40-13:15">3 пара (11:40 - 13:15)</option>
@@ -181,23 +232,23 @@
 
           <div id="custom-time-container" class="hidden grid grid-cols-2 gap-3 mt-2">
             <div>
-              <input type="text" id="time_start" placeholder="08:30" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm">
+              <input type="text" id="time_start" placeholder="08:30" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm font-medium">
             </div>
             <div>
-              <input type="text" id="time_end" placeholder="10:05" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm">
+              <input type="text" id="time_end" placeholder="10:05" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm font-medium">
             </div>
           </div>
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Предмет</label>
-          <select id="subject" required class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm transition"></select>
+          <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Предмет</label>
+          <select id="subject" required class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm font-medium transition"></select>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Тип занятия</label>
-            <select id="type" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm transition">
+            <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Тип занятия</label>
+            <select id="type" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm font-medium transition">
               <option value="Лекция">Лекция</option>
               <option value="Практика">Практика</option>
               <option value="Пара">Пара</option>
@@ -206,21 +257,21 @@
             </select>
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Корпус / Аудитория</label>
-            <select id="room" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm transition"></select>
+            <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Корпус / Ауд.</label>
+            <select id="room" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm font-medium transition"></select>
           </div>
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Преподаватель</label>
-          <select id="teacher" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm transition"></select>
+          <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Преподаватель</label>
+          <select id="teacher" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm font-medium transition"></select>
         </div>
 
         <div class="flex gap-3 pt-4">
-          <button type="button" onclick="closeModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 font-semibold py-3 rounded-2xl transition text-sm">
+          <button type="button" onclick="closeModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 font-bold py-3 rounded-2xl transition text-sm">
             Отмена
           </button>
-          <button type="submit" class="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-3 rounded-2xl shadow-lg shadow-indigo-600/30 transition text-sm">
+          <button type="submit" class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold py-3 rounded-2xl shadow-lg shadow-indigo-600/30 transition text-sm">
             Сохранить
           </button>
         </div>
@@ -228,47 +279,46 @@
     </div>
   </div>
 
-  <!-- МОДАЛКА 2: Отмена или замена пары (ОБНОВЛЕННАЯ С ДОП.ПОЛЯМИ) -->
+  <!-- МОДАЛКА 2: Изменение/Замена пары (Кнопка ⚠️) -->
   <div id="change-modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-md transition-all">
     <div class="glass-modal w-full max-w-lg rounded-t-3xl md:rounded-3xl p-6 shadow-2xl border border-amber-500/20 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-6">
-        <h3 class="text-xl font-bold text-white flex items-center gap-2">⚠️ Изменение пары</h3>
-        <button onclick="closeChangeModal()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center text-sm transition">✕</button>
+        <h3 class="text-lg font-extrabold text-white flex items-center gap-2">⚠️ Изменение пары</h3>
+        <button onclick="closeChangeModal()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center text-xs transition">✕</button>
       </div>
 
       <form onsubmit="savePairChange(event)" class="space-y-4">
         <input type="hidden" id="change-item-id">
 
         <div>
-          <label class="block text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">Предмет по расписанию</label>
-          <input type="text" id="change-item-subject" readonly class="w-full bg-[#121522]/50 border border-white/5 rounded-2xl px-4 py-3 text-slate-300 font-bold text-sm focus:outline-none">
+          <label class="block text-[11px] font-extrabold text-amber-400 uppercase tracking-wider mb-2">Предмет по расписанию</label>
+          <input type="text" id="change-item-subject" readonly class="w-full bg-[#101322]/50 border border-white/5 rounded-2xl px-4 py-3 text-slate-300 font-bold text-sm focus:outline-none">
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">Статус занятия</label>
-          <select id="change_status" onchange="onStatusTypeChange()" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm transition">
+          <label class="block text-[11px] font-extrabold text-amber-400 uppercase tracking-wider mb-2">Статус занятия</label>
+          <select id="change_status" onchange="onStatusTypeChange()" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm font-medium transition">
             <option value="none">Обычная пара (Без изменений)</option>
             <option value="cancelled">🚫 Отмена пары (Окно)</option>
             <option value="moved">🔄 Замена / Перенос пары</option>
           </select>
         </div>
 
-        <!-- Поле "На какой предмет/время замена" -->
         <div id="replacement-field-container" class="hidden">
-          <label class="block text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-2">На какой предмет / время замена?</label>
-          <input type="text" id="change_replacement" placeholder="Например: Высшая математика (2 пара) или Ауд. 402" class="w-full bg-[#121522] border border-indigo-500/40 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-400 text-sm">
+          <label class="block text-[11px] font-extrabold text-indigo-400 uppercase tracking-wider mb-2">На какой предмет / время замена?</label>
+          <input type="text" id="change_replacement" placeholder="Например: Высшая математика (2 пара) или Ауд. 402" class="w-full bg-[#101322] border border-indigo-500/40 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-400 text-sm font-medium">
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Примечание / Комментарий</label>
-          <input type="text" id="change_note" placeholder="Например: Преподаватель заболел или Перенесено" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm">
+          <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Примечание / Комментарий</label>
+          <input type="text" id="change_note" placeholder="Например: Преподаватель заболел" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm font-medium">
         </div>
 
         <div class="flex gap-3 pt-4">
-          <button type="button" onclick="closeChangeModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 font-semibold py-3 rounded-2xl transition text-sm">
+          <button type="button" onclick="closeChangeModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 font-bold py-3 rounded-2xl transition text-sm">
             Отмена
           </button>
-          <button type="submit" class="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-semibold py-3 rounded-2xl shadow-lg shadow-amber-600/30 transition text-sm">
+          <button type="submit" class="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-extrabold py-3 rounded-2xl shadow-lg shadow-amber-600/30 transition text-sm">
             Сохранить
           </button>
         </div>
@@ -280,8 +330,8 @@
   <div id="presets-modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-md transition-all">
     <div class="glass-modal w-full max-w-lg rounded-t-3xl md:rounded-3xl p-6 shadow-2xl border border-white/10 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-6">
-        <h3 class="text-xl font-bold text-white">⚙️ Управление справочниками</h3>
-        <button onclick="closePresetsModal()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center text-sm transition">✕</button>
+        <h3 class="text-lg font-extrabold text-white">⚙️ Управление справочниками</h3>
+        <button onclick="closePresetsModal()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center text-xs transition">✕</button>
       </div>
 
       <div class="flex border-b border-white/10 mb-5 gap-2">
@@ -291,8 +341,8 @@
       </div>
 
       <div class="flex gap-2 mb-4">
-        <input type="text" id="new-preset-name" placeholder="Название..." class="flex-1 bg-[#121522] border border-white/10 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 text-sm">
-        <button onclick="addPreset()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 rounded-2xl text-xs transition shadow-md shadow-indigo-600/30">Добавить</button>
+        <input type="text" id="new-preset-name" placeholder="Название..." class="flex-1 bg-[#101322] border border-white/10 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 text-sm font-medium">
+        <button onclick="addPreset()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-5 rounded-2xl text-xs transition shadow-md shadow-indigo-600/30">Добавить</button>
       </div>
 
       <div id="presets-list" class="space-y-2 max-h-60 overflow-y-auto pr-1 no-scrollbar"></div>
@@ -301,7 +351,7 @@
 
   <!-- СКРЫТЫЙ ШАБЛОН ДЛЯ ГЕНЕРАЦИИ КАРТИНКИ -->
   <div class="fixed -left-[9999px] top-0">
-    <div id="share-card-template" style="width: 460px; background-color: #0c0e17; font-family: 'Plus Jakarta Sans', sans-serif; color: #ffffff; padding: 24px; border-radius: 24px; box-sizing: border-box;">
+    <div id="share-card-template" style="width: 460px; background-color: #070913; font-family: 'Plus Jakarta Sans', sans-serif; color: #ffffff; padding: 24px; border-radius: 24px; box-sizing: border-box;">
       <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 20px;">
         <div style="display: flex; align-items: center; gap: 12px;">
           <div style="width: 42px; height: 42px; border-radius: 14px; background: linear-gradient(135deg, #6366f1, #a855f7); display: flex; align-items: center; justify-content: center; font-size: 20px;">
@@ -339,12 +389,10 @@
     let isDesktop = window.innerWidth >= 1280;
     let isCustomTime = false;
 
-    // УМНЫЙ РАСЧЕТ ДАТ С ПОДДЕРЖКОЙ СЛЕОУЮЩЕЙ НЕДЕЛИ ПРИ ВОСКРЕСЕНЬЕ
+    // РАСЧЕТ ДАТ (Если сегодня воскресенье, переключаем на следующую неделю: 14–19 сен)
     function getWeekDays() {
       const now = new Date();
       const currentDay = now.getDay();
-
-      // Если сегодня Воскресенье (0), автоматически переключаемся на ПОНЕДЕЛЬНИК следующей недели!
       let mondayOffset = (currentDay === 0) ? 1 : (1 - currentDay);
 
       const monday = new Date(now);
@@ -367,6 +415,35 @@
           isToday: isToday
         };
       });
+    }
+
+    // ТАЙМЕР ОТСЧЕТА ДО 24 ЧИСЛА
+    function updateCountdown() {
+      const now = new Date();
+      let targetDate = new Date(now.getFullYear(), now.getMonth(), 24, 23, 59, 59);
+
+      // Если 24-е число текущего месяца уже прошло, ставим 24-е число следующего месяца
+      if (now > targetDate) {
+        targetDate = new Date(now.getFullYear(), now.getMonth() + 1, 24, 23, 59, 59);
+      }
+
+      const diff = targetDate - now;
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / 1000 / 60) % 60);
+
+      document.getElementById('countdown-timer').innerHTML = `
+        <span class="text-indigo-400 font-extrabold">${days}</span>д 
+        <span class="text-indigo-400 font-extrabold">${hours.toString().padStart(2, '0')}</span>ч 
+        <span class="text-indigo-400 font-extrabold">${minutes.toString().padStart(2, '0')}</span>м
+      `;
+
+      // Прогресс бар сессии (расчет от 1 до 24 числа)
+      const totalDays = 24;
+      const passedDays = Math.min(24, Math.max(1, now.getDate()));
+      const progressPercent = Math.round((passedDays / totalDays) * 100);
+      document.getElementById('countdown-progress').style.width = `${progressPercent}%`;
     }
 
     function initGreeting() {
@@ -419,8 +496,8 @@
       if (isDesktop) {
         nav.innerHTML = `
           <div class="flex items-center justify-between px-1 py-1 text-xs font-semibold text-slate-400">
-            <span class="uppercase tracking-widest text-[11px] font-bold text-indigo-400">Обзор всей недели</span>
-            <span class="text-slate-500 font-medium">Текущий график</span>
+            <span class="uppercase tracking-widest text-[11px] font-extrabold text-indigo-400">Обзор всей недели</span>
+            <span class="text-slate-500 font-medium">График занятий</span>
           </div>`;
         return;
       }
@@ -430,7 +507,7 @@
           ${days.map(day => {
             const isActive = activeDay === day.id;
             return `
-              <button onclick="selectDay(${day.id})" class="w-full py-2.5 px-1 rounded-2xl font-semibold transition-all flex flex-col items-center justify-center ${isActive ? 'bg-gradient-to-b from-indigo-600 to-violet-700 text-white shadow-lg shadow-indigo-600/35 border border-indigo-400/30 scale-[1.02]' : 'glass-card text-slate-400 hover:text-white'}">
+              <button onclick="selectDay(${day.id})" class="w-full py-2.5 px-1 rounded-2xl font-bold transition-all flex flex-col items-center justify-center ${isActive ? 'bg-gradient-to-b from-indigo-600 to-purple-700 text-white shadow-lg shadow-indigo-600/35 border border-indigo-400/30 scale-[1.02]' : 'glass-card text-slate-400 hover:text-white'}">
                 <span class="text-xs sm:text-sm flex items-center gap-1 font-bold">
                   ${day.short}
                   ${day.isToday ? '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block shadow-sm shadow-emerald-400"></span>' : ''}
@@ -478,9 +555,9 @@
 
       if(currentDayOfWeek === 0) {
         widget.innerHTML = `
-          <div class="glass p-4 rounded-2xl border-l-4 border-indigo-500 flex items-center gap-3">
+          <div class="glass-card p-4 rounded-3xl border-l-4 border-indigo-500 flex items-center gap-3">
             <span class="text-2xl">🌴</span>
-            <div><div class="font-bold text-white text-sm">Воскресенье — выходной</div><div class="text-xs text-slate-400">Настройтесь на новую учебную неделю!</div></div>
+            <div><div class="font-bold text-white text-sm">Воскресенье — выходной</div><div class="text-xs text-slate-400">Наберитесь сил перед учебной неделей!</div></div>
           </div>`;
         return;
       }
@@ -490,9 +567,9 @@
 
       if(!todayItems.length) {
         widget.innerHTML = `
-          <div class="glass p-4 rounded-2xl border-l-4 border-emerald-500 flex items-center gap-3">
+          <div class="glass-card p-4 rounded-3xl border-l-4 border-emerald-500 flex items-center gap-3">
             <span class="text-2xl">🎉</span>
-            <div><div class="font-bold text-white text-sm">Сегодня нет пар</div><div class="text-xs text-slate-400">В расписании на сегодня ничего не запланировано.</div></div>
+            <div><div class="font-bold text-white text-sm">Сегодня нет пар</div><div class="text-xs text-slate-400">Отличный день для отдыха или самообразования.</div></div>
           </div>`;
         return;
       }
@@ -504,38 +581,38 @@
       if(currentPair) {
         const leftMinutes = timeToMinutes(currentPair.time_end) - currentMinutes;
         widget.innerHTML = `
-          <div class="glass p-4 rounded-2xl border-l-4 border-emerald-500 bg-emerald-500/5 flex justify-between items-center gap-3">
+          <div class="glass-card p-4 rounded-3xl border-l-4 border-emerald-500 bg-emerald-500/5 flex justify-between items-center gap-3">
             <div>
-              <div class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-0.5 flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Сейчас идет (${currentPair.type || 'Пара'})
+              <div class="text-[10px] font-black text-emerald-400 uppercase tracking-wider mb-0.5 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Идет занятие (${currentPair.type || 'Пара'})
               </div>
               <div class="font-bold text-white text-base">${currentPair.subject}</div>
               <div class="text-xs text-slate-400 mt-1">${currentPair.room ? '🏢 Корпус: ' + currentPair.room : ''} ${currentPair.teacher ? '• 👨‍🏫 ' + currentPair.teacher : ''}</div>
             </div>
             <div class="text-right shrink-0">
               <div class="text-xl md:text-2xl font-black text-emerald-400">${leftMinutes} мин</div>
-              <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">до конца</div>
+              <div class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">до конца</div>
             </div>
           </div>`;
       } else if(nextPair) {
         const untilMinutes = timeToMinutes(nextPair.time_start) - currentMinutes;
         widget.innerHTML = `
-          <div class="glass p-4 rounded-2xl border-l-4 border-amber-500 bg-amber-500/5 flex justify-between items-center gap-3">
+          <div class="glass-card p-4 rounded-3xl border-l-4 border-amber-500 bg-amber-500/5 flex justify-between items-center gap-3">
             <div>
-              <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-0.5">Перерыв / Скоро пара</div>
+              <div class="text-[10px] font-black text-amber-400 uppercase tracking-wider mb-0.5">Следующая пара</div>
               <div class="font-bold text-white text-base">${nextPair.subject}</div>
               <div class="text-xs text-slate-400 mt-1">${nextPair.room ? '🏢 Корпус: ' + nextPair.room : ''} ${nextPair.type ? '• ' + nextPair.type : ''}</div>
             </div>
             <div class="text-right shrink-0">
               <div class="text-xl md:text-2xl font-black text-amber-400">${untilMinutes} мин</div>
-              <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">до начала</div>
+              <div class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">до начала</div>
             </div>
           </div>`;
       } else {
         widget.innerHTML = `
-          <div class="glass p-4 rounded-2xl border-l-4 border-indigo-500 flex items-center gap-3">
+          <div class="glass-card p-4 rounded-3xl border-l-4 border-indigo-500 flex items-center gap-3">
             <span class="text-2xl">✅</span>
-            <div><div class="font-bold text-white text-sm">Все пары на сегодня завершены</div><div class="text-xs text-slate-400">Отличная работа!</div></div>
+            <div><div class="font-bold text-white text-sm">Все пары на сегодня завершены</div><div class="text-xs text-slate-400">Отдыхайте!</div></div>
           </div>`;
       }
     }
@@ -549,9 +626,9 @@
           const dayItems = allSchedule.filter(i => i.day_of_week === day.id);
           return `
             <div class="space-y-3">
-              <div class="glass p-3 rounded-2xl text-center border-b border-indigo-500/20">
-                <div class="font-bold text-slate-100 text-sm">${day.full}</div>
-                <div class="text-[11px] text-indigo-400 font-semibold">${day.formattedDate}</div>
+              <div class="glass-card p-3.5 rounded-2xl text-center border-b border-indigo-500/20">
+                <div class="font-extrabold text-slate-100 text-sm">${day.full}</div>
+                <div class="text-[11px] text-indigo-400 font-bold">${day.formattedDate}</div>
               </div>
               <div class="space-y-3">
                 ${renderDayItemsHTML(dayItems)}
@@ -568,7 +645,7 @@
     function renderDayItemsHTML(items) {
       if (!items.length) {
         return `
-          <div class="glass p-8 rounded-3xl text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-2 border border-white/5">
+          <div class="glass-card p-8 rounded-3xl text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-2 border border-white/5">
             <span class="text-2xl">🎉</span>
             <span class="font-medium">Пар нет</span>
           </div>
@@ -582,7 +659,7 @@
         return `
           <div class="glass-card p-4 rounded-2xl relative group ${isCancelled ? 'opacity-60 border-rose-500/30 bg-rose-950/20' : ''} ${isMoved ? 'border-amber-500/40 bg-amber-950/20' : ''}">
             <div class="flex justify-between items-start mb-2.5">
-              <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-xl bg-slate-900/90 text-indigo-300 border border-white/10 tracking-wide">
+              <span class="text-[11px] font-black px-2.5 py-1 rounded-xl bg-slate-900/90 text-indigo-300 border border-white/10 tracking-wide">
                 ${item.time_start} - ${item.time_end}
               </span>
               <div class="flex gap-1">
@@ -609,7 +686,7 @@
             ` : ''}
 
             <div class="flex flex-wrap items-center gap-2 text-xs">
-              ${item.type ? `<span class="px-2 py-0.5 rounded-lg border font-medium text-[11px] ${getTypeStyle(item.type)}">${item.type}</span>` : ''}
+              ${item.type ? `<span class="px-2 py-0.5 rounded-lg border font-bold text-[11px] ${getTypeStyle(item.type)}">${item.type}</span>` : ''}
               ${item.room ? `<span class="text-slate-400 font-medium">🏢 Корпус: ${item.room}</span>` : ''}
             </div>
 
@@ -797,9 +874,9 @@
       }
 
       list.innerHTML = filtered.map(p => `
-        <div class="flex justify-between items-center bg-[#121522] border border-white/5 px-3.5 py-2.5 rounded-xl text-xs font-medium">
+        <div class="flex justify-between items-center bg-[#101322] border border-white/5 px-3.5 py-2.5 rounded-xl text-xs font-medium">
           <span class="text-slate-200">${p.name}</span>
-          <button onclick="deletePreset('${p.id}')" class="text-[11px] text-rose-400 hover:text-rose-300 font-semibold transition">Удалить</button>
+          <button onclick="deletePreset('${p.id}')" class="text-[11px] text-rose-400 hover:text-rose-300 font-bold transition">Удалить</button>
         </div>
       `).join('');
     }
@@ -833,12 +910,12 @@
 
       if (!dayItems.length) {
         listContainer.innerHTML = `
-          <div style="padding: 24px; text-align: center; color: #94a3b8; background-color: #121522; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 14px;">
+          <div style="padding: 24px; text-align: center; color: #94a3b8; background-color: #101322; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 14px;">
             🎉 В этот день нет занятий!
           </div>`;
       } else {
         listContainer.innerHTML = dayItems.map(item => `
-          <div style="padding: 14px 16px; background-color: #121522; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.08);">
+          <div style="padding: 14px 16px; background-color: #101322; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.08);">
             
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
               <span style="font-size: 11px; font-weight: 700; color: #a5b4fc; background-color: rgba(99, 102, 241, 0.15); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(99, 102, 241, 0.2);">
@@ -870,7 +947,7 @@
 
       try {
         const canvas = await html2canvas(template, {
-          backgroundColor: '#0c0e17',
+          backgroundColor: '#070913',
           scale: 3,
           useCORS: true,
           logging: false
@@ -894,7 +971,7 @@
           }
         }, 'image/png');
       } catch (e) {
-        alert('Ошибка при формировании картинки');
+        alert('Ошибка при генерации изображения');
       }
     }
 
@@ -907,8 +984,10 @@
 
     // Инициализация
     initGreeting();
+    updateCountdown();
     renderDaysNav();
     loadData();
+    setInterval(updateCountdown, 1000 * 60);
     setInterval(updateStatusWidget, 30000);
   </script>
 </body>
