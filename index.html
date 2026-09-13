@@ -61,7 +61,6 @@
       box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
     }
 
-    /* Фоновые свечения */
     .ambient-glow-1 {
       position: fixed;
       top: -200px;
@@ -368,14 +367,14 @@
             <div id="share-card-subtitle" style="font-size: 13px; font-weight: 700; color: #a5b4fc; margin-top: 2px;"></div>
           </div>
         </div>
-        <div style="font-size: 11px; font-weight: 800; color: #818cf8; background: rgba(99, 102, 241, 0.12); padding: 6px 12px; border-radius: 12px; border: 1px solid rgba(99, 102, 241, 0.25); text-transform: uppercase; letter-spacing: 0.5px;">
-          Расписание для Котят :D
+        <div style="font-size: 11px; font-weight: 800; color: #818cf8; background: rgba(99, 102, 241, 0.12); padding: 8px 14px; border-radius: 14px; border: 1px solid rgba(99, 102, 241, 0.25); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">
+          Расписание для котят :D
         </div>
       </div>
 
       <div id="share-card-list" style="display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 2; width: 100%;"></div>
 
-      <div style="margin-top: 22px; pt: 16px; border-top: 1px solid rgba(255, 255, 255, 0.05); text-align: center; font-size: 11px; font-weight: 600; color: #64748b; width: 100%;">
+      <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center; font-size: 12px; font-weight: 600; color: #818cf8; width: 100%; display: flex; align-items: center; justify-content: center; gap: 4px;">
         Сгенерировано в приложении моего любимого мужа :3 ✨
       </div>
     </div>
@@ -923,7 +922,6 @@
       }
     }
 
-    /* РЕДАКТИРУЕМЫЕ СПРАВОЧНИКИ (In-Line Edit) */
     function openPresetsModal() {
       editingPresetId = null;
       renderPresetsList();
@@ -1021,7 +1019,6 @@
       }
     }
 
-    /* ЭКСПОРТ РАСПИСАНИЯ */
     async function shareScheduleImage() {
       const days = getWeekDays();
       const targetDay = isDesktop ? days[0] : days.find(d => d.id === activeDay);
