@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" class="h-full bg-[#090a0f] text-slate-100">
+<html lang="ru" class="h-full bg-[#07080d] text-slate-100">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -8,8 +8,8 @@
   <!-- PWA Meta tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#090a0f">
-  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Расписание%22,%22short_name%22:%22Расписание%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22#090a0f%22,%22theme_color%22:%22#090a0f%22}">
+  <meta name="theme-color" content="#07080d">
+  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Расписание%22,%22short_name%22:%22Расписание%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22#07080d%22,%22theme_color%22:%22#07080d%22}">
 
   <!-- Tailwind & Supabase SDK -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -21,36 +21,38 @@
     body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
     
     .glass { 
-      background: rgba(18, 20, 29, 0.65); 
-      backdrop-filter: blur(20px); 
-      -webkit-backdrop-filter: blur(20px); 
+      background: rgba(15, 17, 26, 0.7); 
+      backdrop-filter: blur(24px); 
+      -webkit-backdrop-filter: blur(24px); 
       border: 1px solid rgba(255, 255, 255, 0.08); 
     }
     .glass-modal { 
-      background: rgba(15, 17, 26, 0.95); 
-      backdrop-filter: blur(32px); 
-      -webkit-backdrop-filter: blur(32px); 
+      background: rgba(13, 15, 24, 0.96); 
+      backdrop-filter: blur(36px); 
+      -webkit-backdrop-filter: blur(36px); 
       border: 1px solid rgba(255, 255, 255, 0.12); 
     }
     .glass-card {
-      background: rgba(22, 25, 38, 0.5);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(20, 24, 38, 0.55);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .glass-card:hover {
-      border-color: rgba(129, 140, 248, 0.3);
-      background: rgba(28, 32, 50, 0.6);
+      border-color: rgba(129, 140, 248, 0.35);
+      background: rgba(28, 33, 53, 0.75);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px -10px rgba(79, 70, 229, 0.2);
     }
 
-    /* Фоновое свечение */
     .glow-bg {
       position: fixed;
-      top: -200px;
+      top: -150px;
       left: 50%;
       transform: translateX(-50%);
-      width: 800px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.08) 40%, rgba(0, 0, 0, 0) 70%);
+      width: 900px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(168, 85, 247, 0.1) 35%, rgba(0, 0, 0, 0) 70%);
       pointer-events: none;
       z-index: 0;
     }
@@ -65,51 +67,51 @@
   <div class="glow-bg"></div>
 
   <!-- Шапка -->
-  <header class="sticky top-0 z-30 glass border-b border-white/5 px-4 py-3.5 md:px-8">
+  <header class="sticky top-0 z-30 glass border-b border-white/5 px-4 py-4 md:px-8">
     <div class="max-w-7xl mx-auto flex justify-between items-center relative z-10">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-[1px] shadow-lg shadow-indigo-500/20">
-          <div class="w-full h-full bg-[#0d0f17] rounded-[15px] flex items-center justify-center text-lg">
+      <div class="flex items-center gap-3.5">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 p-[1.5px] shadow-lg shadow-indigo-500/25">
+          <div class="w-full h-full bg-[#0c0d14] rounded-[14px] flex items-center justify-center text-xl">
             🎓
           </div>
         </div>
         <div>
-          <h1 class="text-base md:text-lg font-bold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+          <h1 class="text-lg md:text-xl font-extrabold bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent tracking-tight">
             Академия
           </h1>
-          <p class="text-[11px] text-slate-400 font-medium tracking-wide uppercase">Расписание занятий</p>
+          <p class="text-[10px] text-indigo-400/90 font-bold tracking-widest uppercase">Расписание занятий</p>
         </div>
       </div>
 
       <!-- Кнопки в шапке -->
-      <div class="hidden md:flex items-center gap-2.5">
-        <button onclick="shareScheduleImage()" class="glass hover:bg-slate-800/80 text-indigo-300 font-semibold px-4 py-2 rounded-xl transition-all flex items-center gap-2 text-xs border border-indigo-500/20 hover:border-indigo-500/40 active:scale-95">
+      <div class="hidden md:flex items-center gap-3">
+        <button onclick="shareScheduleImage()" class="glass hover:bg-white/10 text-indigo-300 font-semibold px-4 py-2.5 rounded-2xl transition-all flex items-center gap-2 text-xs border border-indigo-500/30 hover:border-indigo-500/60 active:scale-95 shadow-lg shadow-indigo-950/40">
           <span>📸</span> <span>Поделиться</span>
         </button>
-        <button onclick="openPresetsModal()" class="glass hover:bg-slate-800/80 text-slate-300 font-semibold px-4 py-2 rounded-xl transition-all flex items-center gap-2 text-xs border border-white/5 active:scale-95">
+        <button onclick="openPresetsModal()" class="glass hover:bg-white/10 text-slate-200 font-semibold px-4 py-2.5 rounded-2xl transition-all flex items-center gap-2 text-xs border border-white/10 active:scale-95">
           <span>⚙️</span> <span>Справочники</span>
         </button>
-        <button onclick="openModal()" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold px-4 py-2 rounded-xl shadow-lg shadow-indigo-600/25 transition-all active:scale-95 text-xs flex items-center gap-1.5">
+        <button onclick="openModal()" class="bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold px-5 py-2.5 rounded-2xl shadow-lg shadow-indigo-600/30 transition-all active:scale-95 text-xs flex items-center gap-2">
           <span class="text-base leading-none">+</span> <span>Добавить пару</span>
         </button>
       </div>
     </div>
   </header>
 
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 pt-5 relative z-10">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 pt-6 relative z-10">
     
-    <!-- ПРИВЕТСТВИЕ С ПОЖЕЛАНИЕМ -->
-    <div class="mb-5 glass p-5 md:p-6 rounded-3xl border border-indigo-500/15 bg-gradient-to-r from-indigo-950/30 via-purple-950/15 to-transparent flex items-center justify-between shadow-2xl shadow-indigo-950/20">
+    <!-- ПРИВЕТСТВИЕ -->
+    <div class="mb-6 glass p-6 rounded-3xl border border-indigo-500/20 bg-gradient-to-r from-indigo-950/40 via-purple-950/20 to-transparent flex items-center justify-between shadow-2xl shadow-indigo-950/30">
       <div>
-        <div class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-1 flex items-center gap-1.5" id="greeting-date">
+        <div class="text-[11px] font-bold text-indigo-400 uppercase tracking-widest mb-1 flex items-center gap-2" id="greeting-date">
           <span>Сегодня</span>
         </div>
-        <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
+        <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
           Привет, Виктория! <span class="inline-block animate-bounce">✨</span>
         </h2>
-        <p class="text-xs md:text-sm text-slate-400 mt-1 font-medium">Желаю отличного, легкого и продуктивного дня! 🌸</p>
+        <p class="text-xs md:text-sm text-slate-300 mt-1.5 font-medium">Желаю отличного, легкого и продуктивного дня! 🌸</p>
       </div>
-      <div class="hidden sm:flex w-12 h-12 rounded-2xl bg-white/5 items-center justify-center text-2xl border border-white/10 shadow-inner">
+      <div class="hidden sm:flex w-14 h-14 rounded-2xl bg-white/5 items-center justify-center text-3xl border border-white/10 shadow-inner">
         ☕
       </div>
     </div>
@@ -126,19 +128,19 @@
 
   <!-- Кнопки для мобилок внизу -->
   <div class="md:hidden fixed bottom-6 right-6 z-40 flex items-center gap-3">
-    <button onclick="shareScheduleImage()" class="w-12 h-12 glass text-indigo-300 border border-indigo-500/30 rounded-2xl flex items-center justify-center text-lg shadow-2xl active:scale-90">
+    <button onclick="shareScheduleImage()" class="w-12 h-12 glass text-indigo-300 border border-indigo-500/40 rounded-2xl flex items-center justify-center text-xl shadow-2xl active:scale-90">
       📸
     </button>
-    <button onclick="openPresetsModal()" class="w-12 h-12 glass text-white rounded-2xl flex items-center justify-center text-lg shadow-2xl border border-white/10 active:scale-90">
+    <button onclick="openPresetsModal()" class="w-12 h-12 glass text-white rounded-2xl flex items-center justify-center text-xl shadow-2xl border border-white/10 active:scale-90">
       ⚙️
     </button>
-    <button onclick="openModal()" class="w-14 h-14 bg-gradient-to-tr from-indigo-600 to-violet-500 active:from-indigo-500 active:to-violet-400 text-white rounded-2xl flex items-center justify-center text-2xl shadow-xl shadow-indigo-600/40 border border-indigo-400/30 active:scale-90">
+    <button onclick="openModal()" class="w-14 h-14 bg-gradient-to-tr from-indigo-600 to-violet-500 active:from-indigo-500 active:to-violet-400 text-white rounded-2xl flex items-center justify-center text-2xl shadow-xl shadow-indigo-600/50 border border-indigo-400/40 active:scale-90">
       +
     </button>
   </div>
 
   <!-- МОДАЛКА 1: Добавление/Редактирование пары -->
-  <div id="modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-lg transition-all">
+  <div id="modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-md transition-all">
     <div class="glass-modal w-full max-w-lg rounded-t-3xl md:rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto border border-white/10">
       <div class="flex justify-between items-center mb-6">
         <h3 id="modal-title" class="text-xl font-bold text-white">Новое занятие</h3>
@@ -167,13 +169,13 @@
           </div>
 
           <div id="pair-preset-container">
-            <select id="pair_slot" onchange="onSlotChange()" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 font-medium text-sm transition">
+            <select id="pair_slot" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 font-medium text-sm transition">
               <option value="08:00-09:35">1 пара (08:00 - 09:35)</option>
               <option value="09:50-11:25">2 пара (09:50 - 11:25)</option>
               <option value="11:40-13:15">3 пара (11:40 - 13:15)</option>
-              <option value="13:30-15:25">4 пара СБ (13:30 – 15:25)</option>
               <option value="13:50-15:25">4 пара (13:50 - 15:25)</option>
               <option value="15:40-17:15">5 пара (15:40 - 17:15)</option>
+              <option value="17:30-19:05">4 пара СБ (17:30 - 19:05)</option>
             </select>
           </div>
 
@@ -226,11 +228,11 @@
     </div>
   </div>
 
-  <!-- МОДАЛКА 2: Отмена или замена конкретной пары -->
-  <div id="change-modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-lg transition-all">
+  <!-- МОДАЛКА 2: Отмена или замена пары (ОБНОВЛЕННАЯ С ДОП.ПОЛЯМИ) -->
+  <div id="change-modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-md transition-all">
     <div class="glass-modal w-full max-w-lg rounded-t-3xl md:rounded-3xl p-6 shadow-2xl border border-amber-500/20 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-6">
-        <h3 class="text-xl font-bold text-white flex items-center gap-2">⚠️ Замена / Заметка к паре</h3>
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">⚠️ Изменение пары</h3>
         <button onclick="closeChangeModal()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center text-sm transition">✕</button>
       </div>
 
@@ -238,22 +240,28 @@
         <input type="hidden" id="change-item-id">
 
         <div>
-          <label class="block text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">Предмет</label>
+          <label class="block text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">Предмет по расписанию</label>
           <input type="text" id="change-item-subject" readonly class="w-full bg-[#121522]/50 border border-white/5 rounded-2xl px-4 py-3 text-slate-300 font-bold text-sm focus:outline-none">
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">Статус / Изменение</label>
-          <select id="change_status" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm transition">
+          <label class="block text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">Статус занятия</label>
+          <select id="change_status" onchange="onStatusTypeChange()" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm transition">
             <option value="none">Обычная пара (Без изменений)</option>
-            <option value="cancelled">🚫 Пара отменена</option>
-            <option value="moved">🔄 Перенос / Замена</option>
+            <option value="cancelled">🚫 Отмена пары (Окно)</option>
+            <option value="moved">🔄 Замена / Перенос пары</option>
           </select>
         </div>
 
+        <!-- Поле "На какой предмет/время замена" -->
+        <div id="replacement-field-container" class="hidden">
+          <label class="block text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-2">На какой предмет / время замена?</label>
+          <input type="text" id="change_replacement" placeholder="Например: Высшая математика (2 пара) или Ауд. 402" class="w-full bg-[#121522] border border-indigo-500/40 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-400 text-sm">
+        </div>
+
         <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Примечание (например, перенесено на 2-ю пару)</label>
-          <input type="text" id="change_note" placeholder="Например: Перенесено в Корпус 2, ауд. 302" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm">
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Примечание / Комментарий</label>
+          <input type="text" id="change_note" placeholder="Например: Преподаватель заболел или Перенесено" class="w-full bg-[#121522] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm">
         </div>
 
         <div class="flex gap-3 pt-4">
@@ -268,8 +276,8 @@
     </div>
   </div>
 
-  <!-- МОДАЛКА 3: Редактор Справочников -->
-  <div id="presets-modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-lg transition-all">
+  <!-- МОДАЛКА 3: Справочники -->
+  <div id="presets-modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-md transition-all">
     <div class="glass-modal w-full max-w-lg rounded-t-3xl md:rounded-3xl p-6 shadow-2xl border border-white/10 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-6">
         <h3 class="text-xl font-bold text-white">⚙️ Управление справочниками</h3>
@@ -284,7 +292,7 @@
 
       <div class="flex gap-2 mb-4">
         <input type="text" id="new-preset-name" placeholder="Название..." class="flex-1 bg-[#121522] border border-white/10 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 text-sm">
-        <button onclick="addPreset()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 rounded-2xl text-xs transition shadow-md shadow-indigo-600/20">Добавить</button>
+        <button onclick="addPreset()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 rounded-2xl text-xs transition shadow-md shadow-indigo-600/30">Добавить</button>
       </div>
 
       <div id="presets-list" class="space-y-2 max-h-60 overflow-y-auto pr-1 no-scrollbar"></div>
@@ -293,9 +301,8 @@
 
   <!-- СКРЫТЫЙ ШАБЛОН ДЛЯ ГЕНЕРАЦИИ КАРТИНКИ -->
   <div class="fixed -left-[9999px] top-0">
-    <div id="share-card-template" style="width: 460px; background-color: #0b0d14; font-family: 'Plus Jakarta Sans', sans-serif; color: #ffffff; padding: 24px; border-radius: 24px; box-sizing: border-box;">
-      
-      <div style="display: flex; justify-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 20px;">
+    <div id="share-card-template" style="width: 460px; background-color: #0c0e17; font-family: 'Plus Jakarta Sans', sans-serif; color: #ffffff; padding: 24px; border-radius: 24px; box-sizing: border-box;">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 20px;">
         <div style="display: flex; align-items: center; gap: 12px;">
           <div style="width: 42px; height: 42px; border-radius: 14px; background: linear-gradient(135deg, #6366f1, #a855f7); display: flex; align-items: center; justify-content: center; font-size: 20px;">
             🎓
@@ -305,14 +312,8 @@
             <div id="share-card-subtitle" style="font-size: 13px; font-weight: 600; color: #818cf8; margin-top: 2px;"></div>
           </div>
         </div>
-        <div style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; uppercase;">Академия</div>
       </div>
-
       <div id="share-card-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
-
-      <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center; font-size: 11px; font-weight: 500; color: #64748b;">
-        Сгенерировано в приложении моего любимого мужа :3
-      </div>
     </div>
   </div>
 
@@ -331,18 +332,21 @@
       { id: 6, full: 'Суббота', short: 'Сб' }
     ];
 
-    let activeDay = (new Date().getDay() === 0 || new Date().getDay() === 7) ? 1 : new Date().getDay();
+    let activeDay = (new Date().getDay() === 0) ? 1 : new Date().getDay();
     let allSchedule = [];
     let presets = [];
     let currentPresetTab = 'subject';
     let isDesktop = window.innerWidth >= 1280;
     let isCustomTime = false;
 
+    // УМНЫЙ РАСЧЕТ ДАТ С ПОДДЕРЖКОЙ СЛЕОУЮЩЕЙ НЕДЕЛИ ПРИ ВОСКРЕСЕНЬЕ
     function getWeekDays() {
       const now = new Date();
       const currentDay = now.getDay();
-      const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay;
-      
+
+      // Если сегодня Воскресенье (0), автоматически переключаемся на ПОНЕДЕЛЬНИК следующей недели!
+      let mondayOffset = (currentDay === 0) ? 1 : (1 - currentDay);
+
       const monday = new Date(now);
       monday.setDate(now.getDate() + mondayOffset);
 
@@ -354,15 +358,13 @@
         const dayNum = date.getDate();
         const monthName = months[date.getMonth()];
         const isToday = date.toDateString() === now.toDateString();
-        const isPastSession = dayNum > 26;
 
         return {
           ...day,
           dateNum: dayNum,
           monthName: monthName,
           formattedDate: `${dayNum} ${monthName}`,
-          isToday: isToday,
-          isPastSession: isPastSession
+          isToday: isToday
         };
       });
     }
@@ -415,7 +417,11 @@
       const days = getWeekDays();
 
       if (isDesktop) {
-        nav.innerHTML = `<div class="text-xs font-semibold uppercase tracking-wider text-slate-400 py-1">Обзор всей недели (сессия до 26-го числа)</div>`;
+        nav.innerHTML = `
+          <div class="flex items-center justify-between px-1 py-1 text-xs font-semibold text-slate-400">
+            <span class="uppercase tracking-widest text-[11px] font-bold text-indigo-400">Обзор всей недели</span>
+            <span class="text-slate-500 font-medium">Текущий график</span>
+          </div>`;
         return;
       }
 
@@ -424,12 +430,12 @@
           ${days.map(day => {
             const isActive = activeDay === day.id;
             return `
-              <button onclick="selectDay(${day.id})" class="w-full py-2.5 px-1 rounded-2xl font-semibold transition-all flex flex-col items-center justify-center ${isActive ? 'bg-gradient-to-b from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-600/30 border border-indigo-400/30' : 'glass-card text-slate-400 hover:text-white'} ${day.isPastSession ? 'opacity-40' : ''}">
+              <button onclick="selectDay(${day.id})" class="w-full py-2.5 px-1 rounded-2xl font-semibold transition-all flex flex-col items-center justify-center ${isActive ? 'bg-gradient-to-b from-indigo-600 to-violet-700 text-white shadow-lg shadow-indigo-600/35 border border-indigo-400/30 scale-[1.02]' : 'glass-card text-slate-400 hover:text-white'}">
                 <span class="text-xs sm:text-sm flex items-center gap-1 font-bold">
                   ${day.short}
                   ${day.isToday ? '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block shadow-sm shadow-emerald-400"></span>' : ''}
                 </span>
-                <span class="text-[10px] sm:text-[11px] font-medium mt-0.5 ${isActive ? 'text-indigo-200' : 'text-slate-500'}">${day.formattedDate}</span>
+                <span class="text-[10px] sm:text-[11px] font-medium mt-0.5 ${isActive ? 'text-indigo-100' : 'text-slate-400'}">${day.formattedDate}</span>
               </button>
             `;
           }).join('')}
@@ -469,21 +475,12 @@
       const widget = document.getElementById('status-widget');
       const now = new Date();
       const currentDayOfWeek = now.getDay();
-      
-      if (now.getDate() > 26) {
-        widget.innerHTML = `
-          <div class="glass p-4 rounded-2xl border-l-4 border-slate-500 flex items-center gap-3">
-            <span class="text-2xl">🎓</span>
-            <div><div class="font-bold text-white text-sm">Сессия завершилась 26-го числа</div><div class="text-xs text-slate-400">График занятий выполнен.</div></div>
-          </div>`;
-        return;
-      }
 
       if(currentDayOfWeek === 0) {
         widget.innerHTML = `
           <div class="glass p-4 rounded-2xl border-l-4 border-indigo-500 flex items-center gap-3">
             <span class="text-2xl">🌴</span>
-            <div><div class="font-bold text-white text-sm">Воскресенье — выходной</div><div class="text-xs text-slate-400">Отдыхайте и набирайтесь сил!</div></div>
+            <div><div class="font-bold text-white text-sm">Воскресенье — выходной</div><div class="text-xs text-slate-400">Настройтесь на новую учебную неделю!</div></div>
           </div>`;
         return;
       }
@@ -551,10 +548,10 @@
         container.innerHTML = days.map(day => {
           const dayItems = allSchedule.filter(i => i.day_of_week === day.id);
           return `
-            <div class="space-y-3 ${day.isPastSession ? 'opacity-40' : ''}">
+            <div class="space-y-3">
               <div class="glass p-3 rounded-2xl text-center border-b border-indigo-500/20">
-                <div class="font-bold text-slate-200 text-sm">${day.full}</div>
-                <div class="text-[11px] text-indigo-300 font-medium">${day.formattedDate} ${day.isPastSession ? '(После 26-го)' : ''}</div>
+                <div class="font-bold text-slate-100 text-sm">${day.full}</div>
+                <div class="text-[11px] text-indigo-400 font-semibold">${day.formattedDate}</div>
               </div>
               <div class="space-y-3">
                 ${renderDayItemsHTML(dayItems)}
@@ -563,28 +560,17 @@
           `;
         }).join('');
       } else {
-        const currentDay = days.find(d => d.id === activeDay);
         const currentItems = allSchedule.filter(i => i.day_of_week === activeDay);
-
-        if (currentDay && currentDay.isPastSession) {
-          container.innerHTML = `
-            <div class="glass p-8 rounded-3xl text-center text-slate-400 space-y-2">
-              <span class="text-3xl">🏁</span>
-              <div class="font-bold text-white">Занятия завершены</div>
-              <p class="text-xs">Занятия сессии только до 26-го числа.</p>
-            </div>`;
-        } else {
-          container.innerHTML = renderDayItemsHTML(currentItems);
-        }
+        container.innerHTML = renderDayItemsHTML(currentItems);
       }
     }
 
     function renderDayItemsHTML(items) {
       if (!items.length) {
         return `
-          <div class="glass p-8 rounded-3xl text-center text-slate-500 text-xs flex flex-col items-center justify-center gap-2">
-            <span class="text-xl">🎉</span>
-            <span>Пар нет</span>
+          <div class="glass p-8 rounded-3xl text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-2 border border-white/5">
+            <span class="text-2xl">🎉</span>
+            <span class="font-medium">Пар нет</span>
           </div>
         `;
       }
@@ -594,9 +580,9 @@
         const isMoved = item.change_status === 'moved';
 
         return `
-          <div class="glass-card p-4 rounded-2xl relative group transition-all duration-200 ${isCancelled ? 'opacity-50 line-through border-rose-500/30 bg-rose-950/10' : ''} ${isMoved ? 'border-amber-500/30 bg-amber-950/10' : ''}">
+          <div class="glass-card p-4 rounded-2xl relative group ${isCancelled ? 'opacity-60 border-rose-500/30 bg-rose-950/20' : ''} ${isMoved ? 'border-amber-500/40 bg-amber-950/20' : ''}">
             <div class="flex justify-between items-start mb-2.5">
-              <span class="text-[11px] font-bold px-2.5 py-1 rounded-xl bg-slate-900/90 text-indigo-300 border border-white/10 tracking-wide">
+              <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-xl bg-slate-900/90 text-indigo-300 border border-white/10 tracking-wide">
                 ${item.time_start} - ${item.time_end}
               </span>
               <div class="flex gap-1">
@@ -606,11 +592,19 @@
               </div>
             </div>
 
-            <h4 class="font-bold text-white text-sm md:text-base leading-snug mb-2">${item.subject}</h4>
+            <h4 class="font-bold text-white text-sm md:text-base leading-snug mb-2 ${isCancelled ? 'line-through text-slate-400' : ''}">${item.subject}</h4>
 
-            ${item.change_note ? `
-              <div class="mb-2.5 px-2.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-semibold flex items-center gap-1.5 no-underline">
-                <span>⚠️</span> <span>${item.change_note}</span>
+            ${isCancelled ? `
+              <div class="mb-2.5 px-3 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs font-semibold flex items-center gap-1.5">
+                <span>🚫</span> <span>ОТМЕНА ПАРЫ ${item.change_note ? '(' + item.change_note + ')' : ''}</span>
+              </div>
+            ` : ''}
+
+            ${isMoved ? `
+              <div class="mb-2.5 px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-200 text-xs font-semibold space-y-0.5">
+                <div class="flex items-center gap-1 text-amber-400"><span>🔄</span> <span>ЗАМЕНА / ПЕРЕНОС</span></div>
+                ${item.change_replacement ? `<div class="text-white font-bold">На: ${item.change_replacement}</div>` : ''}
+                ${item.change_note ? `<div class="text-[11px] text-amber-300/80">${item.change_note}</div>` : ''}
               </div>
             ` : ''}
 
@@ -648,6 +642,17 @@
       document.getElementById('modal').classList.add('hidden');
     }
 
+    function onStatusTypeChange() {
+      const status = document.getElementById('change_status').value;
+      const container = document.getElementById('replacement-field-container');
+
+      if (status === 'moved') {
+        container.classList.remove('hidden');
+      } else {
+        container.classList.add('hidden');
+      }
+    }
+
     function openChangeModal(id) {
       const item = allSchedule.find(i => i.id === id);
       if(!item) return;
@@ -655,8 +660,10 @@
       document.getElementById('change-item-id').value = item.id;
       document.getElementById('change-item-subject').value = item.subject;
       document.getElementById('change_status').value = item.change_status || 'none';
+      document.getElementById('change_replacement').value = item.change_replacement || '';
       document.getElementById('change_note').value = item.change_note || '';
 
+      onStatusTypeChange();
       document.getElementById('change-modal').classList.remove('hidden');
     }
 
@@ -669,10 +676,12 @@
 
       const id = document.getElementById('change-item-id').value;
       const status = document.getElementById('change_status').value;
+      const replacement = document.getElementById('change_replacement').value;
       const note = document.getElementById('change_note').value;
 
       await _supabase.from('schedule').update({
         change_status: status,
+        change_replacement: replacement,
         change_note: note
       }).eq('id', id);
 
@@ -812,7 +821,7 @@
       renderPresetsList();
     }
 
-    /* ЛОГИКА ГЕНЕРАЦИИ И ПОДЕЛИТЬСЯ ИЗОБРАЖЕНИЕМ */
+    /* ПОДЕЛИТЬСЯ ИЗОБРАЖЕНИЕМ */
     async function shareScheduleImage() {
       const days = getWeekDays();
       const targetDay = isDesktop ? days[0] : days.find(d => d.id === activeDay);
@@ -831,7 +840,7 @@
         listContainer.innerHTML = dayItems.map(item => `
           <div style="padding: 14px 16px; background-color: #121522; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.08);">
             
-            <div style="display: flex; justify-between; align-items: center; margin-bottom: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
               <span style="font-size: 11px; font-weight: 700; color: #a5b4fc; background-color: rgba(99, 102, 241, 0.15); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(99, 102, 241, 0.2);">
                 ${item.time_start} – ${item.time_end}
               </span>
@@ -842,13 +851,13 @@
               ${item.subject}
             </div>
 
-            ${item.change_note ? `
+            ${item.change_replacement ? `
               <div style="font-size: 11px; font-weight: 600; color: #fbbf24; background-color: rgba(245, 158, 11, 0.1); padding: 6px 10px; border-radius: 8px; margin-bottom: 6px; border: 1px solid rgba(245, 158, 11, 0.2);">
-                ⚠️ ${item.change_note}
+                🔄 Замена на: ${item.change_replacement}
               </div>
             ` : ''}
 
-            <div style="display: flex; justify-between; align-items: center; font-size: 11px; color: #94a3b8; margin-top: 6px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #94a3b8; margin-top: 6px;">
               <div>${item.room ? `🏢 Корпус: ${item.room}` : ''}</div>
               <div>${item.teacher ? `👨‍🏫 ${item.teacher}` : ''}</div>
             </div>
@@ -861,7 +870,7 @@
 
       try {
         const canvas = await html2canvas(template, {
-          backgroundColor: '#0b0d14',
+          backgroundColor: '#0c0e17',
           scale: 3,
           useCORS: true,
           logging: false
