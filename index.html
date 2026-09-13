@@ -61,6 +61,12 @@
       box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
     }
 
+    .time-badge-fix {
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
     .ambient-glow-1 {
       position: fixed;
       top: -200px;
@@ -738,7 +744,7 @@
         const itemCard = `
           <div class="glass-card p-4 rounded-2xl relative group ${isFinished ? 'opacity-50 grayscale-[30%]' : ''} ${isCancelled ? 'opacity-60 border-rose-500/30 bg-rose-950/20' : ''} ${isMoved ? 'border-amber-500/40 bg-amber-950/20' : ''}">
             <div class="flex justify-between items-center mb-2.5">
-              <div class="inline-flex items-center justify-center h-7 px-3 rounded-xl bg-slate-900/90 text-emerald-300 border border-white/10 text-[11px] font-black tracking-wide leading-none">
+              <div class="inline-flex items-center justify-center h-7 px-3 rounded-xl bg-slate-900/90 text-emerald-300 border border-white/10 text-[11px] font-black tracking-wide time-badge-fix">
                 ${item.time_start} – ${item.time_end}
               </div>
               <div class="flex gap-1">
@@ -898,12 +904,14 @@
         isCustomTime = false;
         document.getElementById('pair-preset-container').classList.remove('hidden');
         document.getElementById('custom-time-container').classList.add('hidden');
+        document.getElementById('time-toggle-btn').innerText = 'Указать время вручную';
       } else {
         document.getElementById('time_start').value = item.time_start;
         document.getElementById('time_end').value = item.time_end;
         isCustomTime = true;
         document.getElementById('pair-preset-container').classList.add('hidden');
         document.getElementById('custom-time-container').classList.remove('hidden');
+        document.getElementById('time-toggle-btn').innerText = 'Выбрать готовую пару';
       }
 
       document.getElementById('subject').value = item.subject;
@@ -1074,7 +1082,7 @@
         listContainer.innerHTML = dayItems.map(item => `
           <div style="padding: 16px 18px; background-color: #0b1410; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); box-sizing: border-box; width: 100%;">
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 10px;">
-              <div style="display: inline-flex; align-items: center; justify-content: center; height: 26px; font-size: 12px; font-weight: 800; color: #6ee7b7; background-color: rgba(16, 185, 129, 0.15); padding: 0 12px; border-radius: 10px; border: 1px solid rgba(52, 211, 153, 0.25); line-height: 1;">
+              <div style="display: inline-flex; align-items: center; justify-content: center; height: 26px; font-size: 12px; font-weight: 800; color: #6ee7b7; background-color: rgba(16, 185, 129, 0.15); padding: 0 12px; border-radius: 10px; border: 1px solid rgba(52, 211, 153, 0.25); line-height: 1; font-variant-numeric: tabular-nums;">
                 ${item.time_start} – ${item.time_end}
               </div>
               ${item.type ? `<div style="display: inline-flex; align-items: center; justify-content: center; height: 24px; font-size: 11px; font-weight: 700; color: #cbd5e1; background: rgba(255, 255, 255, 0.05); padding: 0 8px; border-radius: 6px; line-height: 1;">${item.type}</div>` : ''}
@@ -1090,7 +1098,7 @@
               </div>
             ` : ''}
 
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #94a3b8; font-weight: 600; margin-top: 6px; width: 100%;">
+            <div style="display: flex; justify-between; align-items: center; font-size: 12px; color: #94a3b8; font-weight: 600; margin-top: 6px; width: 100%;">
               <div>${item.room ? `🏢 Корпус: ${item.room}` : ''}</div>
             </div>
           </div>
