@@ -26,7 +26,7 @@
       background-color: #05060a;
     }
     
-    /* Ultra-Glassmorphism UI */
+    /* Glassmorphism UI */
     .glass-nav { 
       background: rgba(8, 10, 18, 0.75); 
       backdrop-filter: blur(20px); 
@@ -45,7 +45,7 @@
     .glass-card:hover {
       border-color: rgba(129, 140, 248, 0.3);
       background: rgba(19, 23, 40, 0.8);
-      transform: translateY(-3px);
+      transform: translateY(-2px);
       box-shadow: 0 16px 36px -12px rgba(99, 102, 241, 0.18);
     }
 
@@ -56,7 +56,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1); 
     }
 
-    /* Фоновые градиентные анимированные свечения */
+    /* Фоновые свечения */
     .ambient-glow-1 {
       position: fixed;
       top: -200px;
@@ -85,15 +85,12 @@
 </head>
 <body class="h-full flex flex-col pb-24 md:pb-12 relative overflow-x-hidden text-slate-100">
 
-  <!-- Декоративный фоновый свет -->
   <div class="ambient-glow-1"></div>
   <div class="ambient-glow-2"></div>
 
-  <!-- ШАПКА САЙТА -->
+  <!-- ШАПКА -->
   <header class="sticky top-0 z-40 glass-nav px-4 md:px-8 py-3.5">
     <div class="max-w-7xl mx-auto flex justify-between items-center relative z-10">
-      
-      <!-- Логотип -->
       <div class="flex items-center gap-3.5">
         <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 p-[1.5px] shadow-lg shadow-indigo-500/20">
           <div class="w-full h-full bg-[#080911] rounded-[14px] flex items-center justify-center text-lg">
@@ -108,7 +105,6 @@
         </div>
       </div>
 
-      <!-- Кнопки управления (Десктоп) -->
       <div class="hidden md:flex items-center gap-3">
         <button onclick="shareScheduleImage()" class="glass-card hover:bg-white/10 text-indigo-300 font-bold px-4 py-2.5 rounded-2xl transition-all flex items-center gap-2 text-xs border border-indigo-500/30 shadow-md">
           <span>📸</span> <span>Поделиться</span>
@@ -123,10 +119,9 @@
     </div>
   </header>
 
-  <!-- ОСНОВНОЙ КОНТЕНТ -->
+  <!-- КОНТЕНТ -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 pt-6 relative z-10 space-y-6">
     
-    <!-- ПРИВЕТСТВИЕ И ИНФО-КАРТОЧКИ -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
       
       <!-- Приветствие -->
@@ -145,15 +140,19 @@
         </div>
       </div>
 
-      <!-- ВИДЖЕТ: ОБРАТНЫЙ ОТСЧЕТ ДО 24 ЧИСЛА -->
-      <div class="glass-card p-6 rounded-3xl border border-purple-500/20 bg-gradient-to-br from-purple-950/30 via-slate-900/40 to-transparent flex flex-col justify-between shadow-2xl">
+      <!-- ВИДЖЕТ: КАРАУСЕЛЬ ТАЙМЕРОВ (24 И 26 ЧИСЛО) -->
+      <div class="glass-card p-6 rounded-3xl border border-purple-500/20 bg-gradient-to-br from-purple-950/30 via-slate-900/40 to-transparent flex flex-col justify-between shadow-2xl relative overflow-hidden">
         <div class="flex justify-between items-center mb-2">
-          <span class="text-[11px] font-black text-purple-400 uppercase tracking-widest">Сессия / Семестр</span>
-          <span class="text-xs px-2.5 py-0.5 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 font-bold">До 24-го числа</span>
+          <span id="countdown-title" class="text-[11px] font-black text-purple-400 uppercase tracking-widest">Приезд к жене 👩‍❤️‍👨</span>
+          <div class="flex items-center gap-1.5">
+            <button onclick="switchCountdown(0)" id="cd-dot-0" class="w-2 h-2 rounded-full bg-purple-400 transition-all"></button>
+            <button onclick="switchCountdown(1)" id="cd-dot-1" class="w-2 h-2 rounded-full bg-white/20 transition-all"></button>
+            <button onclick="toggleCountdownNext()" class="ml-1 text-slate-400 hover:text-white text-xs font-bold px-1.5 py-0.5 rounded-md bg-white/5">➡️</button>
+          </div>
         </div>
         
         <div class="my-2">
-          <div class="text-xs text-slate-400 font-medium mb-1">До завершения осталось:</div>
+          <div id="countdown-subtitle" class="text-xs text-slate-400 font-medium mb-1">Осталось до встречи (24-е число):</div>
           <div id="countdown-timer" class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
             <span class="text-purple-400">00</span>д <span class="text-purple-400">00</span>ч <span class="text-purple-400">00</span>м
           </div>
@@ -169,14 +168,14 @@
     <!-- ТЕКУЩИЙ СТАТУС ПАРЫ -->
     <div id="status-widget"></div>
 
-    <!-- НАВИГАЦИЯ ПО ДНЯМ НЕДЕЛИ -->
+    <!-- НАВИГАЦИЯ ПО ДНЯМ -->
     <div id="days-nav"></div>
 
     <!-- СЕТКА РАСПИСАНИЯ -->
     <div id="schedule-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4"></div>
   </main>
 
-  <!-- МОБИЛЬНЫЕ КНОПКИ УПРАВЛЕНИЯ -->
+  <!-- МОБИЛЬНЫЕ КНОПКИ -->
   <div class="md:hidden fixed bottom-6 right-6 z-40 flex items-center gap-3">
     <button onclick="shareScheduleImage()" class="w-12 h-12 glass-card text-indigo-300 border border-indigo-500/40 rounded-2xl flex items-center justify-center text-xl shadow-2xl active:scale-90">
       📸
@@ -189,7 +188,7 @@
     </button>
   </div>
 
-  <!-- МОДАЛКА 1: Добавление/Редактирование пары -->
+  <!-- МОДАЛКА 1: Пара -->
   <div id="modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-md transition-all">
     <div class="glass-modal w-full max-w-lg rounded-t-3xl md:rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto border border-white/10">
       <div class="flex justify-between items-center mb-6">
@@ -230,12 +229,8 @@
           </div>
 
           <div id="custom-time-container" class="hidden grid grid-cols-2 gap-3 mt-2">
-            <div>
-              <input type="text" id="time_start" placeholder="08:30" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm font-medium">
-            </div>
-            <div>
-              <input type="text" id="time_end" placeholder="10:05" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm font-medium">
-            </div>
+            <input type="text" id="time_start" placeholder="08:30" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm font-medium">
+            <input type="text" id="time_end" placeholder="10:05" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm font-medium">
           </div>
         </div>
 
@@ -262,18 +257,14 @@
         </div>
 
         <div class="flex gap-3 pt-4">
-          <button type="button" onclick="closeModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 font-bold py-3 rounded-2xl transition text-sm">
-            Отмена
-          </button>
-          <button type="submit" class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold py-3 rounded-2xl shadow-lg shadow-indigo-600/30 transition text-sm">
-            Сохранить
-          </button>
+          <button type="button" onclick="closeModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 font-bold py-3 rounded-2xl transition text-sm">Отмена</button>
+          <button type="submit" class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold py-3 rounded-2xl shadow-lg shadow-indigo-600/30 transition text-sm">Сохранить</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- МОДАЛКА 2: Изменение/Замена пары (Кнопка ⚠️) -->
+  <!-- МОДАЛКА 2: Замена -->
   <div id="change-modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-md transition-all">
     <div class="glass-modal w-full max-w-lg rounded-t-3xl md:rounded-3xl p-6 shadow-2xl border border-amber-500/20 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-6">
@@ -309,12 +300,8 @@
         </div>
 
         <div class="flex gap-3 pt-4">
-          <button type="button" onclick="closeChangeModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 font-bold py-3 rounded-2xl transition text-sm">
-            Отмена
-          </button>
-          <button type="submit" class="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-extrabold py-3 rounded-2xl shadow-lg shadow-amber-600/30 transition text-sm">
-            Сохранить
-          </button>
+          <button type="button" onclick="closeChangeModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 font-bold py-3 rounded-2xl transition text-sm">Отмена</button>
+          <button type="submit" class="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-extrabold py-3 rounded-2xl shadow-lg shadow-amber-600/30 transition text-sm">Сохранить</button>
         </div>
       </form>
     </div>
@@ -342,19 +329,16 @@
     </div>
   </div>
 
-  <!-- СКРЫТЫЙ ПРЕМИАЛЬНЫЙ ШАБЛОН ДЛЯ ГЕНЕРАЦИИ «ПОДЕЛИТЬСЯ» -->
+  <!-- ИСПРАВЛЕННЫЙ ШАБЛОН ЭКСПОРТА (HTML2CANVAS СТАБИЛЬНЫЙ FLEX) -->
   <div class="fixed -left-[9999px] top-0">
     <div id="share-card-template" style="width: 480px; background: #070914; font-family: 'Plus Jakarta Sans', sans-serif; color: #ffffff; padding: 28px; border-radius: 32px; box-sizing: border-box; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden;">
       
-      <!-- Декоративное свечение на фоновой картинке -->
       <div style="position: absolute; top: -100px; right: -100px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(0, 0, 0, 0) 70%); border-radius: 50%;"></div>
 
-      <!-- Шапка картинки -->
-      <div style="display: flex; justify-between: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 22px; position: relative; z-index: 2;">
+      <!-- Хедер картинки -->
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 22px; position: relative; z-index: 2;">
         <div style="display: flex; align-items: center; gap: 14px;">
-          <div style="width: 46px; height: 46px; border-radius: 16px; background: linear-gradient(135deg, #6366f1, #a855f7); display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);">
-            🎓
-          </div>
+          <div style="width: 46px; height: 46px; border-radius: 16px; background: linear-gradient(135deg, #6366f1, #a855f7); display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);">🎓</div>
           <div>
             <div style="font-size: 19px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; line-height: 1.2;">Академия</div>
             <div id="share-card-subtitle" style="font-size: 13px; font-weight: 700; color: #a5b4fc; margin-top: 2px;"></div>
@@ -365,12 +349,11 @@
         </div>
       </div>
 
-      <!-- СПИСОК ПАР -->
-      <div id="share-card-list" style="display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 2;"></div>
+      <!-- Карточки пар -->
+      <div id="share-card-list" style="display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 2; width: 100%;"></div>
 
-      <!-- Подвал карточки -->
-      <div style="margin-top: 22px; pt: 16px; border-top: 1px solid rgba(255, 255, 255, 0.05); text-align: center; font-size: 11px; font-weight: 600; color: #64748b;">
-        Сгенерировано в интерактивном расписании Академии ✨
+      <div style="margin-top: 22px; pt: 16px; border-top: 1px solid rgba(255, 255, 255, 0.05); text-align: center; font-size: 11px; font-weight: 600; color: #64748b; width: 100%;">
+        Сгенерировано в расписании Академии ✨
       </div>
     </div>
   </div>
@@ -396,8 +379,14 @@
     let currentPresetTab = 'subject';
     let isDesktop = window.innerWidth >= 1280;
     let isCustomTime = false;
+    let activeCountdownIdx = 0; // 0 = 24 число, 1 = 26 число
+    let isFinishedCollapsed = true; // состояние спойлера завершенных пар
 
-    // Расчет дней текущей недели
+    const countdownTargets = [
+      { day: 24, title: 'Приезд к жене 👩‍❤️‍👨', subtitle: 'Осталось до встречи (24-е число):' },
+      { day: 26, title: 'Конец сессии 🎓', subtitle: 'Осталось до конца сессии (26-е число):' }
+    ];
+
     function getWeekDays() {
       const now = new Date();
       const currentDay = now.getDay();
@@ -425,29 +414,45 @@
       });
     }
 
-    // Обратный отсчет до 24 числа
+    function switchCountdown(idx) {
+      activeCountdownIdx = idx;
+      updateCountdown();
+    }
+
+    function toggleCountdownNext() {
+      activeCountdownIdx = (activeCountdownIdx + 1) % countdownTargets.length;
+      updateCountdown();
+    }
+
     function updateCountdown() {
+      const targetConfig = countdownTargets[activeCountdownIdx];
       const now = new Date();
-      let targetDate = new Date(now.getFullYear(), now.getMonth(), 24, 23, 59, 59);
+      let targetDate = new Date(now.getFullYear(), now.getMonth(), targetConfig.day, 23, 59, 59);
 
       if (now > targetDate) {
-        targetDate = new Date(now.getFullYear(), now.getMonth() + 1, 24, 23, 59, 59);
+        targetDate = new Date(now.getFullYear(), now.getMonth() + 1, targetConfig.day, 23, 59, 59);
       }
 
       const diff = targetDate - now;
-
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
       const minutes = Math.floor((diff / 1000 / 60) % 60);
 
+      document.getElementById('countdown-title').innerText = targetConfig.title;
+      document.getElementById('countdown-subtitle').innerText = targetConfig.subtitle;
+
       document.getElementById('countdown-timer').innerHTML = `
-        <span class="text-indigo-400 font-extrabold">${days}</span>д 
-        <span class="text-indigo-400 font-extrabold">${hours.toString().padStart(2, '0')}</span>ч 
-        <span class="text-indigo-400 font-extrabold">${minutes.toString().padStart(2, '0')}</span>м
+        <span class="text-purple-400 font-extrabold">${days}</span>д 
+        <span class="text-purple-400 font-extrabold">${hours.toString().padStart(2, '0')}</span>ч 
+        <span class="text-purple-400 font-extrabold">${minutes.toString().padStart(2, '0')}</span>м
       `;
 
-      const totalDays = 24;
-      const passedDays = Math.min(24, Math.max(1, now.getDate()));
+      // Переключение индикаторов (точек)
+      document.getElementById('cd-dot-0').className = activeCountdownIdx === 0 ? "w-2 h-2 rounded-full bg-purple-400 transition-all" : "w-2 h-2 rounded-full bg-white/20 transition-all";
+      document.getElementById('cd-dot-1').className = activeCountdownIdx === 1 ? "w-2 h-2 rounded-full bg-purple-400 transition-all" : "w-2 h-2 rounded-full bg-white/20 transition-all";
+
+      const totalDays = targetConfig.day;
+      const passedDays = Math.min(targetConfig.day, Math.max(1, now.getDate()));
       const progressPercent = Math.round((passedDays / totalDays) * 100);
       document.getElementById('countdown-progress').style.width = `${progressPercent}%`;
     }
@@ -621,6 +626,11 @@
       }
     }
 
+    function toggleFinishedSpoiler() {
+      isFinishedCollapsed = !isFinishedCollapsed;
+      renderSchedule();
+    }
+
     function renderSchedule() {
       const container = document.getElementById('schedule-container');
       const days = getWeekDays();
@@ -635,18 +645,19 @@
                 <div class="text-[11px] text-indigo-400 font-bold">${day.formattedDate}</div>
               </div>
               <div class="space-y-3">
-                ${renderDayItemsHTML(dayItems)}
+                ${renderDayItemsHTML(dayItems, day.isToday)}
               </div>
             </div>
           `;
         }).join('');
       } else {
         const currentItems = allSchedule.filter(i => i.day_of_week === activeDay);
-        container.innerHTML = renderDayItemsHTML(currentItems);
+        const activeDayData = days.find(d => d.id === activeDay);
+        container.innerHTML = renderDayItemsHTML(currentItems, activeDayData ? activeDayData.isToday : false);
       }
     }
 
-    function renderDayItemsHTML(items) {
+    function renderDayItemsHTML(items, isToday = false) {
       if (!items.length) {
         return `
           <div class="glass-card p-8 rounded-3xl text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-2 border border-white/5">
@@ -656,12 +667,21 @@
         `;
       }
 
-      return items.map(item => {
+      const now = new Date();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+      let activeOrUpcomingHTML = '';
+      let finishedItemsHTML = '';
+      let finishedCount = 0;
+
+      items.forEach(item => {
+        const endMinutes = timeToMinutes(item.time_end);
+        const isFinished = isToday && (currentMinutes >= endMinutes);
         const isCancelled = item.change_status === 'cancelled';
         const isMoved = item.change_status === 'moved';
 
-        return `
-          <div class="glass-card p-4 rounded-2xl relative group ${isCancelled ? 'opacity-60 border-rose-500/30 bg-rose-950/20' : ''} ${isMoved ? 'border-amber-500/40 bg-amber-950/20' : ''}">
+        const itemCard = `
+          <div class="glass-card p-4 rounded-2xl relative group ${isFinished ? 'opacity-50 grayscale-[30%]' : ''} ${isCancelled ? 'opacity-60 border-rose-500/30 bg-rose-950/20' : ''} ${isMoved ? 'border-amber-500/40 bg-amber-950/20' : ''}">
             <div class="flex justify-between items-start mb-2.5">
               <span class="text-[11px] font-black px-2.5 py-1 rounded-xl bg-slate-900/90 text-indigo-300 border border-white/10 tracking-wide">
                 ${item.time_start} - ${item.time_end}
@@ -695,7 +715,32 @@
             </div>
           </div>
         `;
-      }).join('');
+
+        if (isFinished) {
+          finishedCount++;
+          finishedItemsHTML += itemCard;
+        } else {
+          activeOrUpcomingHTML += itemCard;
+        }
+      });
+
+      let resultHTML = activeOrUpcomingHTML;
+
+      if (finishedCount > 0) {
+        resultHTML += `
+          <div class="pt-2">
+            <button onclick="toggleFinishedSpoiler()" class="w-full py-2.5 px-4 rounded-2xl glass-card border border-white/5 hover:border-white/10 text-slate-400 hover:text-slate-200 font-bold text-xs flex items-center justify-between transition">
+              <span class="flex items-center gap-2"><span>✅</span> Завершенные пары (${finishedCount})</span>
+              <span class="text-indigo-400">${isFinishedCollapsed ? 'Показать ▼' : 'Скрыть ▲'}</span>
+            </button>
+            <div class="${isFinishedCollapsed ? 'hidden' : 'space-y-3 mt-3'}">
+              ${finishedItemsHTML}
+            </div>
+          </div>
+        `;
+      }
+
+      return resultHTML;
     }
 
     function selectDay(id) {
@@ -898,7 +943,7 @@
       renderPresetsList();
     }
 
-    /* ОБНОВЛЕННАЯ СИСТЕМА ГЕНЕРАЦИИ КАРТИНКИ "ПОДЕЛИДЬСЯ" */
+    /* ИСПРАВЛЕННАЯ ГЕНЕРАЦИЯ HTML2CANVAS (ИДЕАЛЬНОЕ ВЫРАВНИВАНИЕ) */
     async function shareScheduleImage() {
       const days = getWeekDays();
       const targetDay = isDesktop ? days[0] : days.find(d => d.id === activeDay);
@@ -915,13 +960,13 @@
           </div>`;
       } else {
         listContainer.innerHTML = dayItems.map(item => `
-          <div style="padding: 16px 18px; background-color: #0f1322; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+          <div style="padding: 16px 18px; background-color: #0f1322; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); box-sizing: border-box; width: 100%;">
             
-            <div style="display: flex; justify-between: space-between; align-items: center; margin-bottom: 8px;">
-              <span style="font-size: 12px; font-weight: 800; color: #a5b4fc; background-color: rgba(99, 102, 241, 0.15); padding: 4px 12px; border-radius: 10px; border: 1px solid rgba(99, 102, 241, 0.25);">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 8px;">
+              <span style="font-size: 12px; font-weight: 800; color: #a5b4fc; background-color: rgba(99, 102, 241, 0.15); padding: 5px 12px; border-radius: 10px; border: 1px solid rgba(99, 102, 241, 0.25); display: inline-block; line-height: 1;">
                 ${item.time_start} – ${item.time_end}
               </span>
-              ${item.type ? `<span style="font-size: 11px; font-weight: 700; color: #cbd5e1; background: rgba(255, 255, 255, 0.05); padding: 3px 8px; border-radius: 6px;">${item.type}</span>` : ''}
+              ${item.type ? `<span style="font-size: 11px; font-weight: 700; color: #cbd5e1; background: rgba(255, 255, 255, 0.05); padding: 4px 8px; border-radius: 6px; display: inline-block; line-height: 1;">${item.type}</span>` : ''}
             </div>
 
             <div style="font-size: 16px; font-weight: 800; color: #ffffff; line-height: 1.35; margin-bottom: 6px;">
@@ -934,7 +979,7 @@
               </div>
             ` : ''}
 
-            <div style="display: flex; justify-between: space-between; align-items: center; font-size: 12px; color: #94a3b8; font-weight: 600; margin-top: 6px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #94a3b8; font-weight: 600; margin-top: 6px; width: 100%;">
               <div>${item.room ? `🏢 Корпус: ${item.room}` : ''}</div>
             </div>
 
