@@ -14,7 +14,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   
-  <!-- Шрифты Plus Jakarta Sans & Inter -->
+  <!-- Шрифты Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -26,7 +26,7 @@
       background-color: #05060a;
     }
     
-    /* Сверхсовременный Glassmorphism */
+    /* Ultra-Glassmorphism UI */
     .glass-nav { 
       background: rgba(8, 10, 18, 0.75); 
       backdrop-filter: blur(20px); 
@@ -56,7 +56,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1); 
     }
 
-    /* Флеш фоновые свечения (Background Lights) */
+    /* Фоновые градиентные анимированные свечения */
     .ambient-glow-1 {
       position: fixed;
       top: -200px;
@@ -85,7 +85,7 @@
 </head>
 <body class="h-full flex flex-col pb-24 md:pb-12 relative overflow-x-hidden text-slate-100">
 
-  <!-- Декоративные ауры -->
+  <!-- Декоративный фоновый свет -->
   <div class="ambient-glow-1"></div>
   <div class="ambient-glow-2"></div>
 
@@ -108,7 +108,7 @@
         </div>
       </div>
 
-      <!-- Кнопки управления (Desktop) -->
+      <!-- Кнопки управления (Десктоп) -->
       <div class="hidden md:flex items-center gap-3">
         <button onclick="shareScheduleImage()" class="glass-card hover:bg-white/10 text-indigo-300 font-bold px-4 py-2.5 rounded-2xl transition-all flex items-center gap-2 text-xs border border-indigo-500/30 shadow-md">
           <span>📸</span> <span>Поделиться</span>
@@ -126,10 +126,10 @@
   <!-- ОСНОВНОЙ КОНТЕНТ -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 pt-6 relative z-10 space-y-6">
     
-    <!-- ПРИВЕТСТВИЕ И ТОП-КАРТОЧКИ -->
+    <!-- ПРИВЕТСТВИЕ И ИНФО-КАРТОЧКИ -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
       
-      <!-- Карточка приветствия -->
+      <!-- Приветствие -->
       <div class="lg:col-span-2 glass-card p-6 rounded-3xl border border-indigo-500/20 bg-gradient-to-br from-indigo-950/30 via-slate-900/40 to-transparent flex items-center justify-between shadow-2xl">
         <div>
           <div class="text-[11px] font-black text-indigo-400 uppercase tracking-widest mb-1.5 flex items-center gap-2" id="greeting-date">
@@ -153,9 +153,8 @@
         </div>
         
         <div class="my-2">
-          <div class="text-xs text-slate-400 font-medium mb-1">До окончания осталось:</div>
+          <div class="text-xs text-slate-400 font-medium mb-1">До завершения осталось:</div>
           <div id="countdown-timer" class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-            <!-- Заполняется динамически -->
             <span class="text-purple-400">00</span>д <span class="text-purple-400">00</span>ч <span class="text-purple-400">00</span>м
           </div>
         </div>
@@ -167,17 +166,17 @@
 
     </div>
 
-    <!-- ВИДЖЕТ ТЕКУЩЕГО СТАТУСА (ПАРЫ СЕЙЧАС) -->
+    <!-- ТЕКУЩИЙ СТАТУС ПАРЫ -->
     <div id="status-widget"></div>
 
-    <!-- НАВИГАЦИЯ ПО ДНЯМ -->
+    <!-- НАВИГАЦИЯ ПО ДНЯМ НЕДЕЛИ -->
     <div id="days-nav"></div>
 
     <!-- СЕТКА РАСПИСАНИЯ -->
     <div id="schedule-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4"></div>
   </main>
 
-  <!-- МОБИЛЬНАЯ ПАНЕЛЬ КНОПОК -->
+  <!-- МОБИЛЬНЫЕ КНОПКИ УПРАВЛЕНИЯ -->
   <div class="md:hidden fixed bottom-6 right-6 z-40 flex items-center gap-3">
     <button onclick="shareScheduleImage()" class="w-12 h-12 glass-card text-indigo-300 border border-indigo-500/40 rounded-2xl flex items-center justify-center text-xl shadow-2xl active:scale-90">
       📸
@@ -262,11 +261,6 @@
           </div>
         </div>
 
-        <div>
-          <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Преподаватель</label>
-          <select id="teacher" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-sm font-medium transition"></select>
-        </div>
-
         <div class="flex gap-3 pt-4">
           <button type="button" onclick="closeModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 font-bold py-3 rounded-2xl transition text-sm">
             Отмена
@@ -311,7 +305,7 @@
 
         <div>
           <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Примечание / Комментарий</label>
-          <input type="text" id="change_note" placeholder="Например: Преподаватель заболел" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm font-medium">
+          <input type="text" id="change_note" placeholder="Например: Перенос занятия по договоренности" class="w-full bg-[#101322] border border-white/10 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm font-medium">
         </div>
 
         <div class="flex gap-3 pt-4">
@@ -337,7 +331,6 @@
       <div class="flex border-b border-white/10 mb-5 gap-2">
         <button onclick="switchPresetTab('subject')" id="tab-subject" class="pb-2.5 px-3 text-xs font-bold border-b-2 border-indigo-500 text-indigo-400 transition">Предметы</button>
         <button onclick="switchPresetTab('room')" id="tab-room" class="pb-2.5 px-3 text-xs font-bold text-slate-400 hover:text-slate-200 transition">Корпусы</button>
-        <button onclick="switchPresetTab('teacher')" id="tab-teacher" class="pb-2.5 px-3 text-xs font-bold text-slate-400 hover:text-slate-200 transition">Преподаватели</button>
       </div>
 
       <div class="flex gap-2 mb-4">
@@ -349,21 +342,36 @@
     </div>
   </div>
 
-  <!-- СКРЫТЫЙ ШАБЛОН ДЛЯ ГЕНЕРАЦИИ КАРТИНКИ -->
+  <!-- СКРЫТЫЙ ПРЕМИАЛЬНЫЙ ШАБЛОН ДЛЯ ГЕНЕРАЦИИ «ПОДЕЛИТЬСЯ» -->
   <div class="fixed -left-[9999px] top-0">
-    <div id="share-card-template" style="width: 460px; background-color: #070913; font-family: 'Plus Jakarta Sans', sans-serif; color: #ffffff; padding: 24px; border-radius: 24px; box-sizing: border-box;">
-      <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 20px;">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="width: 42px; height: 42px; border-radius: 14px; background: linear-gradient(135deg, #6366f1, #a855f7); display: flex; align-items: center; justify-content: center; font-size: 20px;">
+    <div id="share-card-template" style="width: 480px; background: #070914; font-family: 'Plus Jakarta Sans', sans-serif; color: #ffffff; padding: 28px; border-radius: 32px; box-sizing: border-box; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden;">
+      
+      <!-- Декоративное свечение на фоновой картинке -->
+      <div style="position: absolute; top: -100px; right: -100px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(0, 0, 0, 0) 70%); border-radius: 50%;"></div>
+
+      <!-- Шапка картинки -->
+      <div style="display: flex; justify-between: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 22px; position: relative; z-index: 2;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 46px; height: 46px; border-radius: 16px; background: linear-gradient(135deg, #6366f1, #a855f7); display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);">
             🎓
           </div>
           <div>
-            <div style="font-size: 18px; font-weight: 800; color: #ffffff; line-height: 1.2;">Расписание занятий</div>
-            <div id="share-card-subtitle" style="font-size: 13px; font-weight: 600; color: #818cf8; margin-top: 2px;"></div>
+            <div style="font-size: 19px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; line-height: 1.2;">Академия</div>
+            <div id="share-card-subtitle" style="font-size: 13px; font-weight: 700; color: #a5b4fc; margin-top: 2px;"></div>
           </div>
         </div>
+        <div style="font-size: 11px; font-weight: 800; color: #818cf8; background: rgba(99, 102, 241, 0.12); padding: 6px 12px; border-radius: 12px; border: 1px solid rgba(99, 102, 241, 0.25); text-transform: uppercase; letter-spacing: 0.5px;">
+          Расписание
+        </div>
       </div>
-      <div id="share-card-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
+
+      <!-- СПИСОК ПАР -->
+      <div id="share-card-list" style="display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 2;"></div>
+
+      <!-- Подвал карточки -->
+      <div style="margin-top: 22px; pt: 16px; border-top: 1px solid rgba(255, 255, 255, 0.05); text-align: center; font-size: 11px; font-weight: 600; color: #64748b;">
+        Сгенерировано в интерактивном расписании Академии ✨
+      </div>
     </div>
   </div>
 
@@ -389,7 +397,7 @@
     let isDesktop = window.innerWidth >= 1280;
     let isCustomTime = false;
 
-    // РАСЧЕТ ДАТ (Если сегодня воскресенье, переключаем на следующую неделю: 14–19 сен)
+    // Расчет дней текущей недели
     function getWeekDays() {
       const now = new Date();
       const currentDay = now.getDay();
@@ -417,12 +425,11 @@
       });
     }
 
-    // ТАЙМЕР ОТСЧЕТА ДО 24 ЧИСЛА
+    // Обратный отсчет до 24 числа
     function updateCountdown() {
       const now = new Date();
       let targetDate = new Date(now.getFullYear(), now.getMonth(), 24, 23, 59, 59);
 
-      // Если 24-е число текущего месяца уже прошло, ставим 24-е число следующего месяца
       if (now > targetDate) {
         targetDate = new Date(now.getFullYear(), now.getMonth() + 1, 24, 23, 59, 59);
       }
@@ -439,7 +446,6 @@
         <span class="text-indigo-400 font-extrabold">${minutes.toString().padStart(2, '0')}</span>м
       `;
 
-      // Прогресс бар сессии (расчет от 1 до 24 числа)
       const totalDays = 24;
       const passedDays = Math.min(24, Math.max(1, now.getDate()));
       const progressPercent = Math.round((passedDays / totalDays) * 100);
@@ -497,7 +503,7 @@
         nav.innerHTML = `
           <div class="flex items-center justify-between px-1 py-1 text-xs font-semibold text-slate-400">
             <span class="uppercase tracking-widest text-[11px] font-extrabold text-indigo-400">Обзор всей недели</span>
-            <span class="text-slate-500 font-medium">График занятий</span>
+            <span class="text-slate-500 font-medium">График предметов</span>
           </div>`;
         return;
       }
@@ -535,11 +541,9 @@
     function populateSelectOptions() {
       const subjects = presets.filter(p => p.type === 'subject');
       const rooms = presets.filter(p => p.type === 'room');
-      const teachers = presets.filter(p => p.type === 'teacher');
 
       document.getElementById('subject').innerHTML = subjects.map(s => `<option value="${s.name}">${s.name}</option>`).join('') || '<option value="">(Список пуст)</option>';
       document.getElementById('room').innerHTML = '<option value="">Не указано</option>' + rooms.map(r => `<option value="${r.name}">${r.name}</option>`).join('');
-      document.getElementById('teacher').innerHTML = '<option value="">Не указано</option>' + teachers.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
     }
 
     function timeToMinutes(timeStr) {
@@ -587,7 +591,7 @@
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Идет занятие (${currentPair.type || 'Пара'})
               </div>
               <div class="font-bold text-white text-base">${currentPair.subject}</div>
-              <div class="text-xs text-slate-400 mt-1">${currentPair.room ? '🏢 Корпус: ' + currentPair.room : ''} ${currentPair.teacher ? '• 👨‍🏫 ' + currentPair.teacher : ''}</div>
+              <div class="text-xs text-slate-400 mt-1">${currentPair.room ? '🏢 Корпус: ' + currentPair.room : ''}</div>
             </div>
             <div class="text-right shrink-0">
               <div class="text-xl md:text-2xl font-black text-emerald-400">${leftMinutes} мин</div>
@@ -689,8 +693,6 @@
               ${item.type ? `<span class="px-2 py-0.5 rounded-lg border font-bold text-[11px] ${getTypeStyle(item.type)}">${item.type}</span>` : ''}
               ${item.room ? `<span class="text-slate-400 font-medium">🏢 Корпус: ${item.room}</span>` : ''}
             </div>
-
-            ${item.teacher ? `<div class="mt-2.5 pt-2 border-t border-white/5 text-xs text-slate-400 flex items-center gap-1"><span>👨‍🏫</span> <span>${item.teacher}</span></div>` : ''}
           </div>
         `;
       }).join('');
@@ -793,7 +795,6 @@
       document.getElementById('subject').value = item.subject;
       document.getElementById('type').value = item.type || 'Лекция';
       document.getElementById('room').value = item.room || '';
-      document.getElementById('teacher').value = item.teacher || '';
 
       document.getElementById('modal').classList.remove('hidden');
     }
@@ -820,8 +821,7 @@
         time_end: end,
         subject: document.getElementById('subject').value,
         type: document.getElementById('type').value,
-        room: document.getElementById('room').value,
-        teacher: document.getElementById('teacher').value
+        room: document.getElementById('room').value
       };
 
       if (id) {
@@ -853,7 +853,7 @@
 
     function switchPresetTab(tab) {
       currentPresetTab = tab;
-      ['subject', 'room', 'teacher'].forEach(t => {
+      ['subject', 'room'].forEach(t => {
         const btn = document.getElementById(`tab-${t}`);
         if(t === tab) {
           btn.className = "pb-2.5 px-3 text-xs font-bold border-b-2 border-indigo-500 text-indigo-400 transition";
@@ -898,7 +898,7 @@
       renderPresetsList();
     }
 
-    /* ПОДЕЛИТЬСЯ ИЗОБРАЖЕНИЕМ */
+    /* ОБНОВЛЕННАЯ СИСТЕМА ГЕНЕРАЦИИ КАРТИНКИ "ПОДЕЛИДЬСЯ" */
     async function shareScheduleImage() {
       const days = getWeekDays();
       const targetDay = isDesktop ? days[0] : days.find(d => d.id === activeDay);
@@ -910,33 +910,32 @@
 
       if (!dayItems.length) {
         listContainer.innerHTML = `
-          <div style="padding: 24px; text-align: center; color: #94a3b8; background-color: #101322; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 14px;">
+          <div style="padding: 28px; text-align: center; color: #94a3b8; background-color: #0f1322; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 14px; font-weight: 600;">
             🎉 В этот день нет занятий!
           </div>`;
       } else {
         listContainer.innerHTML = dayItems.map(item => `
-          <div style="padding: 14px 16px; background-color: #101322; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.08);">
+          <div style="padding: 16px 18px; background-color: #0f1322; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
             
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <span style="font-size: 11px; font-weight: 700; color: #a5b4fc; background-color: rgba(99, 102, 241, 0.15); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(99, 102, 241, 0.2);">
+            <div style="display: flex; justify-between: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 12px; font-weight: 800; color: #a5b4fc; background-color: rgba(99, 102, 241, 0.15); padding: 4px 12px; border-radius: 10px; border: 1px solid rgba(99, 102, 241, 0.25);">
                 ${item.time_start} – ${item.time_end}
               </span>
-              ${item.type ? `<span style="font-size: 11px; font-weight: 600; color: #94a3b8;">${item.type}</span>` : ''}
+              ${item.type ? `<span style="font-size: 11px; font-weight: 700; color: #cbd5e1; background: rgba(255, 255, 255, 0.05); padding: 3px 8px; border-radius: 6px;">${item.type}</span>` : ''}
             </div>
 
-            <div style="font-size: 15px; font-weight: 700; color: #ffffff; line-height: 1.3; margin-bottom: 6px;">
+            <div style="font-size: 16px; font-weight: 800; color: #ffffff; line-height: 1.35; margin-bottom: 6px;">
               ${item.subject}
             </div>
 
             ${item.change_replacement ? `
-              <div style="font-size: 11px; font-weight: 600; color: #fbbf24; background-color: rgba(245, 158, 11, 0.1); padding: 6px 10px; border-radius: 8px; margin-bottom: 6px; border: 1px solid rgba(245, 158, 11, 0.2);">
-                🔄 Замена на: ${item.change_replacement}
+              <div style="font-size: 12px; font-weight: 700; color: #fbbf24; background-color: rgba(245, 158, 11, 0.12); padding: 6px 12px; border-radius: 10px; margin-bottom: 6px; border: 1px solid rgba(245, 158, 11, 0.25);">
+                🔄 Замена: ${item.change_replacement}
               </div>
             ` : ''}
 
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #94a3b8; margin-top: 6px;">
+            <div style="display: flex; justify-between: space-between; align-items: center; font-size: 12px; color: #94a3b8; font-weight: 600; margin-top: 6px;">
               <div>${item.room ? `🏢 Корпус: ${item.room}` : ''}</div>
-              <div>${item.teacher ? `👨‍🏫 ${item.teacher}` : ''}</div>
             </div>
 
           </div>
@@ -947,14 +946,14 @@
 
       try {
         const canvas = await html2canvas(template, {
-          backgroundColor: '#070913',
+          backgroundColor: '#070914',
           scale: 3,
           useCORS: true,
           logging: false
         });
 
         canvas.toBlob(async (blob) => {
-          const file = new File([blob], `schedule-${targetDay.short}.png`, { type: 'image/png' });
+          const file = new File([blob], `расписание-${targetDay.short}.png`, { type: 'image/png' });
 
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             try {
@@ -977,7 +976,7 @@
 
     function downloadImage(canvas, dayShort) {
       const link = document.createElement('a');
-      link.download = `schedule-${dayShort}.png`;
+      link.download = `расписание-${dayShort}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
     }
