@@ -717,10 +717,10 @@
 
         const itemCard = `
           <div class="glass-card p-4 rounded-2xl relative group ${isFinished ? 'opacity-50 grayscale-[30%]' : ''} ${isCancelled ? 'opacity-60 border-rose-500/30 bg-rose-950/20' : ''} ${isMoved ? 'border-amber-500/40 bg-amber-950/20' : ''}">
-            <div class="flex justify-between items-start mb-2.5">
-              <span class="text-[11px] font-black px-2.5 py-1 rounded-xl bg-slate-900/90 text-indigo-300 border border-white/10 tracking-wide">
-                ${item.time_start} - ${item.time_end}
-              </span>
+            <div class="flex justify-between items-center mb-2.5">
+              <div class="inline-flex items-center justify-center h-7 px-3 rounded-xl bg-slate-900/90 text-indigo-300 border border-white/10 text-[11px] font-black tracking-wide leading-none">
+                ${item.time_start} – ${item.time_end}
+              </div>
               <div class="flex gap-1">
                 <button onclick="openChangeModal('${item.id}')" title="Замена / Заметка" class="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-xs text-amber-400 transition">⚠️</button>
                 <button onclick="editModal('${item.id}')" title="Редактировать" class="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-xs text-slate-400 hover:text-indigo-400 transition">✏️</button>
@@ -1036,11 +1036,11 @@
       } else {
         listContainer.innerHTML = dayItems.map(item => `
           <div style="padding: 16px 18px; background-color: #0f1322; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); box-sizing: border-box; width: 100%;">
-            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 8px;">
-              <span style="font-size: 12px; font-weight: 800; color: #a5b4fc; background-color: rgba(99, 102, 241, 0.15); padding: 5px 12px; border-radius: 10px; border: 1px solid rgba(99, 102, 241, 0.25); display: inline-block; line-height: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 10px;">
+              <div style="display: inline-flex; align-items: center; justify-content: center; height: 26px; font-size: 12px; font-weight: 800; color: #a5b4fc; background-color: rgba(99, 102, 241, 0.15); padding: 0 12px; border-radius: 10px; border: 1px solid rgba(99, 102, 241, 0.25); line-height: 1;">
                 ${item.time_start} – ${item.time_end}
-              </span>
-              ${item.type ? `<span style="font-size: 11px; font-weight: 700; color: #cbd5e1; background: rgba(255, 255, 255, 0.05); padding: 4px 8px; border-radius: 6px; display: inline-block; line-height: 1;">${item.type}</span>` : ''}
+              </div>
+              ${item.type ? `<div style="display: inline-flex; align-items: center; justify-content: center; height: 24px; font-size: 11px; font-weight: 700; color: #cbd5e1; background: rgba(255, 255, 255, 0.05); padding: 0 8px; border-radius: 6px; line-height: 1;">${item.type}</div>` : ''}
             </div>
 
             <div style="font-size: 16px; font-weight: 800; color: #ffffff; line-height: 1.35; margin-bottom: 6px;">
